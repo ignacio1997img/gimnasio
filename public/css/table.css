@@ -1,0 +1,24 @@
+
+    #dataTable {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    #dataTable td, #dataTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    }
+
+    #dataTable tr:nth-child(even){background-color: #ffffff;}
+
+    #dataTable tr:hover {background-color: #ddd;}
+
+    #dataTable th {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: left;
+        background-color: #04AA6D;
+        color: white;
+    }
+    

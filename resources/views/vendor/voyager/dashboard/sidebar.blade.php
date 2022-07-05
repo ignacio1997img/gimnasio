@@ -6,7 +6,21 @@
                     <div class="logo-icon-container">
                         <?php $admin_logo_img = Voyager::setting('admin.icon_image', ''); ?>
                         @if($admin_logo_img == '')
-                            <img src="{{ asset('images/icon.png') }}" alt="Logo Icon">
+                            @php
+                                $user = \Auth::user();
+                                if($user->busine_id)
+                                {
+                                    $busine = \App\Models\Busine::find($user->busine_id);
+                                    $image = 'storage/'.str_replace('.', '-cropped.', $busine->image);
+                                }
+                                else {
+                                    $image = 'images/icon.png';
+                                }
+                            @endphp
+                            <img src="{{ asset($image) }}" alt="Logo Icon">
+                           
+                            {{-- <img src="{{auth()->user()->hasRole('admin')? asset('images/icon.png'):asset('storage/'.str_replace('.', '-cropped.', \App\Model\User::w)) }}" alt="Logo Icon"> --}}
+                            {{-- <img src="{{ asset('images/icon.png') }}" alt="Logo Icon"> --}}
                         @else
                             <img src="{{ Voyager::image($admin_logo_img) }}" alt="Logo Icon">
                         @endif

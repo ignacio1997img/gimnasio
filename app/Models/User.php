@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Role;
 
 class User extends \TCG\Voyager\Models\User
 {
@@ -20,7 +21,16 @@ class User extends \TCG\Voyager\Models\User
         'name',
         'email',
         'password',
+        'role_id',
+        'avatar',
+        'busine_id',
+        'status'
     ];
+
+    public function busine()
+    {
+        return $this->belongsTo(Busine::class, 'busine_id');
+    }
 
     /**
      * The attributes that should be hidden for arrays.
