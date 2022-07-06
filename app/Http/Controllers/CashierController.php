@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Busine;
 use Illuminate\Http\Request;
 use App\Models\Cashier;
 use App\Models\Vault;
@@ -20,6 +21,7 @@ class CashierController extends Controller
         $vault = Vault::where('busine_id', $user->busine_id)->first();
         // return $vault;
         $cashier = Cashier::where('deleted_at', null)->where('vault_id', $vault->id)->get();
+        // return $cashier;
         return view('cashier.browse', compact('cashier', 'vault'));
     }
 
@@ -36,14 +38,14 @@ class CashierController extends Controller
     public function store(Request $request)
     {
         // dd($request);
-        return $request;
+        // return $request;
         $cashier = Cashier::where('user_id', $request->user_id)->where('status', '!=', 'cerrada')->where('deleted_at', NULL)->first();
 
         if(!$cashier){
             DB::beginTransaction();
             try {
                 $cashier = Cashier::create([
-                    'vault_id' => $request->vault,
+                    'vault_id' => $request->vault_id,
                     'user_id' => $request->user_id,
                     'title' => $request->title,
                     'observations' => $request->observations,
@@ -94,7 +96,10 @@ class CashierController extends Controller
         }
     }
 
+
+    //para que el cajero acepte el monto de dinero y abilite la caja
     public function change_status($id, Request $request){
+        // return 11;
         // DB::beginTransaction();
         try {
             if($request->status == 'abierta'){
@@ -141,7 +146,9 @@ class CashierController extends Controller
         }
     }
 
+    //para que el cajero cierre la caja y devuekva el dinero
     public function close($id){
+        return 234234;
         $cashier = Cashier::with(['movements' => function($q){
             $q->where('deleted_at', NULL);
         }, 'payments' => function($q){
@@ -154,45 +161,63 @@ class CashierController extends Controller
 
 
     //para mostart mediante graficos
-    public function print_transfer($id){
-        $movement = CashiersMovement::with(['cashier', 'user'])->where('id', $id)->first();
-        // dd($movement);
-        return view('cashier.print-transfer', compact('movement'));
-    }
+    // public function print_transfer($id){
+    //     $movement = CashiersMovement::with(['cashier', 'user'])->where('id', $id)->first();
+    //     // dd($movement);
+    //     return view('cashier.print-transfer', compact('movement'));
+    // }
 
 
 
 
 
 
-    public function planillas_pagos_print($id){
-        // $payment = CashiersPayment::with(['cashier.user', 'paymentschedulesdetail.contract.person', 'paymentschedulesdetail.paymentschedule.direccion_administrativa'])->where('id', $id)->first();
-        // $planilla = null;
-        // if($payment->planilla_haber_id){
-        //     $planilla = DB::connection('mysqlgobe')->table('planillahaberes as p')
-        //                 ->join('planillaprocesada as pp', 'pp.id', 'p.idPlanillaprocesada')
-        //                 ->join('tplanilla as tp', 'tp.id', 'p.Tplanilla')
-        //                 ->where('p.id', $payment->planilla_haber_id)
-        //                 ->select('p.*', 'p.ITEM as item', 'tp.Nombre as tipo_planilla', 'pp.Estado as estado_planilla_procesada')
-        //                 ->first();    
-        // }
-        // dd($payment);
+    // public function planillas_pagos_print($id){
+    //     // $payment = CashiersPayment::with(['cashier.user', 'paymentschedulesdetail.contract.person', 'paymentschedulesdetail.paymentschedule.direccion_administrativa'])->where('id', $id)->first();
+    //     // $planilla = null;
+    //     // if($payment->planilla_haber_id){
+    //     //     $planilla = DB::connection('mysqlgobe')->table('planillahaberes as p')
+    //     //                 ->join('planillaprocesada as pp', 'pp.id', 'p.idPlanillaprocesada')
+    //     //                 ->join('tplanilla as tp', 'tp.id', 'p.Tplanilla')
+    //     //                 ->where('p.id', $payment->planilla_haber_id)
+    //     //                 ->select('p.*', 'p.ITEM as item', 'tp.Nombre as tipo_planilla', 'pp.Estado as estado_planilla_procesada')
+    //     //                 ->first();    
+    //     // }
+    //     // dd($payment);
         
-        return view('cashier.payment-recipe-alt');
-    }
+    //     return view('cashier.payment-recipe-alt');
+    // }
 
-    public function planillas_pagos_delete_print($id){
-        // $payment = CashiersPayment::with(['cashier.user', 'deletes.user'])->where('id', $id)->first();
-        // $planilla = null;
-        // if($payment->planilla_haber_id){
-        //     $planilla = DB::connection('mysqlgobe')->table('planillahaberes as p')
-        //                     ->where('p.id', $payment->planilla_haber_id)
-        //                     ->select('p.ID', 'p.Liquido_Pagable')
-        //                     ->first();
-        // }
+    // public function planillas_pagos_delete_print($id){
+    //     // $payment = CashiersPayment::with(['cashier.user', 'deletes.user'])->where('id', $id)->first();
+    //     // $planilla = null;
+    //     // if($payment->planilla_haber_id){
+    //     //     $planilla = DB::connection('mysqlgobe')->table('planillahaberes as p')
+    //     //                     ->where('p.id', $payment->planilla_haber_id)
+    //     //                     ->select('p.ID', 'p.Liquido_Pagable')
+    //     //                     ->first();
+    //     // }
         
-        // dd($payment, $planilla);
-        return view('cashier.payment-recipe-delete');
+    //     // dd($payment, $planilla);
+    //     return view('cashier.payment-recipe-delete');
+    // }
+
+
+    //para imprimir el comproibante cuando se habre una caja
+    public function print_open($id){
+        $cashier = Cashier::with(['user', 'vault_details' => function($q){
+            $q->where('deleted_at', NULL);
+        }, 'vault_details.cash' => function($q){
+            $q->where('deleted_at', NULL);
+        }, 'movements' => function($q){
+            $q->where('deleted_at', NULL);
+        }])->where('id', $id)->first();
+
+        $busine = Vault::with('busine')->where('id', $cashier->vault_id)->first();
+        
+        // dd($cashier);
+        // $view = view('cashier.print-open', compact('cashier'));
+        return view('cashier.print-open', compact('cashier', 'busine'));
     }
 
 }

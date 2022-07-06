@@ -350,6 +350,7 @@ small{font-size: 12px;
     <script>
         $(function()
         {
+            // alert(3)
             $('#dataTable').DataTable({
                     language: {
                             // "order": [[ 0, "desc" ]],
@@ -395,8 +396,9 @@ small{font-size: 12px;
 
         function functionDay()
         {
+            
             id= $(this).val();
-            // alert(id)
+            alert(id)
             if(id>=1)
             {
                 if(id==4)    

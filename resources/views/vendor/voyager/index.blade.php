@@ -4,7 +4,7 @@
     <div class="page-content">
         @include('voyager::alerts')
         {{-- Vista de cajero(a) --}}
-        @if (Auth::user()->role_id == 3)
+        @if (Auth::user()->role_id == 3 || Auth::user()->role_id == 4)
             @php
                 $cashier = \App\Models\Cashier::with(['movements' => function($q){
                     $q->where('deleted_at', NULL);
@@ -31,7 +31,8 @@
                                         
 
                                         $amount = $cashier->client->where('deleted_at', null)->sum('amount');
-
+                                        // dd($amount);
+                                        // $amount =2;
                                         $movements = $cashier_in + $amount;
                                         // $total = $movements - $payments;
                                         $total = $movements;
@@ -44,7 +45,7 @@
                                         </div>
                                         @if ($cashier->status == 'abierta')
                                             <div class="col-md-6 text-right">
-                                                <button type="button" data-toggle="modal" data-target="#transfer-modal" class="btn btn-success">Transferir <i class="voyager-forward"></i></button>
+                                                {{-- <button type="button" data-toggle="modal" data-target="#transfer-modal" class="btn btn-success">Transferir <i class="voyager-forward"></i></button> --}}
                                                 <a href="{{ route('cashiers.close', ['cashier' => $cashier->id]) }}" class="btn btn-danger">Cerrar <i class="voyager-lock"></i></a>
                                             </div>
                                         @endif
@@ -274,7 +275,7 @@
                             </div>
                         </div>
 
-                        <form id="form-pagar" action="{{ route('cashiers.amount.store') }}" method="post">
+                        {{-- <form id="form-pagar" action="{{ route('cashiers.amount.store') }}" method="post">
                             @csrf
                             @if ($cashier)
                             <input type="hidden" name="id" value="{{ $cashier->id }}">
@@ -315,7 +316,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        </form> --}}
                     @else
                         <div class="row">
                             <div class="col-md-12">
@@ -438,7 +439,7 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('cashiers.close.revert', ['cashier' => $cashier->id]) }}" method="post">
+                    {{-- <form action="{{ route('cashiers.close.revert', ['cashier' => $cashier->id]) }}" method="post">
                         @csrf
                         <div class="modal fade" tabindex="-1" id="cashier-revert-modal" role="dialog">
                             <div class="modal-dialog modal-success">
@@ -457,7 +458,7 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </form> --}}
                 @endif
             @else
                 <div class="row">
@@ -476,7 +477,7 @@
 
 @section('javascript')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js"></script>
-    @if ((Auth::user()->role_id == 3) && $cashier)
+    @if ((Auth::user()->role_id == 3 || Auth::user()->role_id == 4) && $cashier)
         @if ($cashier->status == 'abierta')
             <script>
                 $(document).ready(function(){

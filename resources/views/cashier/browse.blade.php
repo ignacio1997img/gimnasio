@@ -58,16 +58,19 @@
                                             <td>{{$item->id}}</td>
                                             <td style="width: 200pt; text-align: center">{{$item->user->name}}</td>
                                             <td style="text-align: center">{{$item->title}}</td>
-                                            <td style="text-align: center">{{$item->status}}</td>
+                                            <td style="text-align: center">
+                                                <label class="label label-success">{{$item->status}}</label>
+                                            </td>
                                             <td style="text-align: center">{{date('d/m/Y H:i:s', strtotime($item->created_at))}}<br><small>{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}.</small></td>
                                             <td style="text-align: center">{{date('d/m/Y H:i:s', strtotime($item->close_at))}}<br><small>{{\Carbon\Carbon::parse($item->close_at)->diffForHumans()}}.</small></td>
                             
                                             <td style="text-align: right">
+                                                <a href="#" title="Ver" class="btn btn-sm btn-default pull-right" onclick="openWindow({{$item->id}})">
+                                                    <i class="voyager-file-text"></i> <span class="hidden-xs hidden-sm">Imprimir apertura</span>
+                                                </a>
                                                 <div class="no-sort no-click bread-actions text-right">
                                                     @if(auth()->user()->hasPermission('read_income'))
-                                                        <a href="" title="Ver" target="_blank" class="btn btn-sm btn-info view">
-                                                            <i class="voyager-basket"></i> <span class="hidden-xs hidden-sm">Stock</span>
-                                                        </a>
+                                                        
                                                         <a href="{{route('income_view',$item->id)}}" title="Ver" target="_blank" class="btn btn-sm btn-info view">
                                                             <i class="voyager-file-text"></i> <span class="hidden-xs hidden-sm">Ver</span>
                                                         </a>                                                                
@@ -236,6 +239,14 @@
 
                 }
             });
+        }
+
+        function openWindow(id){
+            // window.open("{{ url('admin/cashiers/print/transfer') }}/"+id, "Entrega de fondos", `width=700, height=400`);
+            
+            // $url = route('print.open', ['cashier' => id]);
+            // alert(id)
+            window.open("{{ route('print.open')}}/"+id, 'Apertura de caja', `width=1000, height=700`);
         }
 
         // @if(session('rotation_id'))

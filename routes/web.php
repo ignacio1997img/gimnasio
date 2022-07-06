@@ -51,12 +51,15 @@ Route::group(['prefix' => 'admin'], function () {
 
     Route::resource('cashiers', CashierController::class);
     Route::post('cashiers/{cashier}/change/status', [CashierController::class, 'change_status'])->name('cashiers.change.status');//para que acepta los cajeros el  monto dado de 
-    Route::get('cashiers/{cashier}/amount', [CashierController::class, 'amount'])->name('cashiers.amount');
-    Route::post('cashiers/amount/store', [CashierController::class, 'amount_store'])->name('cashiers.amount.store');
-    Route::post('cashiers/{cashier}/close/revert', [CashierController::class, 'close_revert'])->name('cashiers.close.revert');
-    Route::get('cashiers/{cashier}/close/', [CashierController::class, 'close'])->name('cashiers.close');
+    // Route::get('cashiers/{cashier}/amount', [CashierController::class, 'amount'])->name('cashiers.amount');
+    // Route::post('cashiers/amount/store', [CashierController::class, 'amount_store'])->name('cashiers.amount.store');
+    // Route::post('cashiers/{cashier}/close/revert', [CashierController::class, 'close_revert'])->name('cashiers.close.revert');
+    Route::get('cashiers/{cashier}/close/', [CashierController::class, 'close'])->name('cashiers.close');//para cerrar la caja el cajero
 
-    Route::get('cashiers/print/transfer/{transfer}', [CashierController::class, 'print_transfer'])->name('print.transfer');
+    Route::get('cashiers/print/open/{id?}', [CashierController::class, 'print_open'])->name('print.open');//para imprimir el comprobante cuando se abre una caja
+
+
+    // Route::get('cashiers/print/transfer/{transfer}', [CashierController::class, 'print_transfer'])->name('print.transfer');
 
     Route::get('planillas/pagos/print/{id}', [CashierController::class, 'planillas_pagos_print']);//proceso
     Route::get('planillas/pagos/delete/print/{id}', [CashierController::class, 'planillas_pagos_delete_print']);//procesoo
