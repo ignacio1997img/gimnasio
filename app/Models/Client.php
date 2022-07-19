@@ -42,6 +42,11 @@ class Client extends Model
     {
         return $this->belongsTo(People::class, 'people_id');
     }
+    
+    public function item()
+    {
+        return $this->hasMany(Item::class);
+    }
 
 
 }

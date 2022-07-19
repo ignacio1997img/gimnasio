@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Busine;
 use Illuminate\Http\Request;
 use App\Models\Cashier;
+use App\Models\CashiersDetail;
 use App\Models\Vault;
 use App\Models\VaultsDetail;
 use App\Models\VaultsDetailsCash;
@@ -148,59 +149,48 @@ class CashierController extends Controller
 
     //para que el cajero cierre la caja y devuekva el dinero
     public function close($id){
-        return 234234;
+        // return 234234;
         $cashier = Cashier::with(['movements' => function($q){
-            $q->where('deleted_at', NULL);
-        }, 'payments' => function($q){
             $q->where('deleted_at', NULL);
         }])
         ->where('id', $id)->where('deleted_at', NULL)->first();
-        return view('vendor.voyager.cashiers.close', compact('cashier'));
+        return view('cashier.close', compact('cashier'));
+    }
+    
+    public function close_store($id, Request $request){
+        // dd($request);
+        DB::beginTransaction();
+        try {
+            $cashier = Cashier::findOrFail($id);
+            if($cashier->status != 'cierre pendiente'){
+                $cashier->closed_at = Carbon::now();
+                $cashier->status = 'cierre pendiente';
+                $cashier->save();
+
+                for ($i=0; $i < count($request->cash_value); $i++) { 
+                    // if($request->quantity[$i]){
+                        CashiersDetail::create([
+                            'cashier_id' => $id,
+                            'cash_value' => $request->cash_value[$i],
+                            'quantity' => $request->quantity[$i],
+                        ]);
+                    // }
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('voyager.dashboard')->with(['message' => 'Caja cerrada exitosamente.', 'alert-type' => 'success']);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            // dd($th);
+            return redirect()->route('voyager.dashboard')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        }
     }
 
 
 
-    //para mostart mediante graficos
-    // public function print_transfer($id){
-    //     $movement = CashiersMovement::with(['cashier', 'user'])->where('id', $id)->first();
-    //     // dd($movement);
-    //     return view('cashier.print-transfer', compact('movement'));
-    // }
 
 
-
-
-
-
-    // public function planillas_pagos_print($id){
-    //     // $payment = CashiersPayment::with(['cashier.user', 'paymentschedulesdetail.contract.person', 'paymentschedulesdetail.paymentschedule.direccion_administrativa'])->where('id', $id)->first();
-    //     // $planilla = null;
-    //     // if($payment->planilla_haber_id){
-    //     //     $planilla = DB::connection('mysqlgobe')->table('planillahaberes as p')
-    //     //                 ->join('planillaprocesada as pp', 'pp.id', 'p.idPlanillaprocesada')
-    //     //                 ->join('tplanilla as tp', 'tp.id', 'p.Tplanilla')
-    //     //                 ->where('p.id', $payment->planilla_haber_id)
-    //     //                 ->select('p.*', 'p.ITEM as item', 'tp.Nombre as tipo_planilla', 'pp.Estado as estado_planilla_procesada')
-    //     //                 ->first();    
-    //     // }
-    //     // dd($payment);
-        
-    //     return view('cashier.payment-recipe-alt');
-    // }
-
-    // public function planillas_pagos_delete_print($id){
-    //     // $payment = CashiersPayment::with(['cashier.user', 'deletes.user'])->where('id', $id)->first();
-    //     // $planilla = null;
-    //     // if($payment->planilla_haber_id){
-    //     //     $planilla = DB::connection('mysqlgobe')->table('planillahaberes as p')
-    //     //                     ->where('p.id', $payment->planilla_haber_id)
-    //     //                     ->select('p.ID', 'p.Liquido_Pagable')
-    //     //                     ->first();
-    //     // }
-        
-    //     // dd($payment, $planilla);
-    //     return view('cashier.payment-recipe-delete');
-    // }
 
 
     //para imprimir el comproibante cuando se habre una caja

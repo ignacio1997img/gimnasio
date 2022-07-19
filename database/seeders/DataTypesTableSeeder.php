@@ -89,7 +89,7 @@ class DataTypesTableSeeder extends Seeder
                 'server_side' => 0,
                 'details' => '{"order_column":null,"order_display_column":null,"order_direction":"asc","default_search_key":null,"scope":null}',
                 'created_at' => '2022-06-18 23:50:57',
-                'updated_at' => '2022-06-24 09:25:23',
+                'updated_at' => '2022-07-14 11:30:08',
             ),
             4 => 
             array (
@@ -147,11 +147,11 @@ class DataTypesTableSeeder extends Seeder
             ),
             7 => 
             array (
-                'id' => 10,
+                'id' => 14,
                 'name' => 'busines',
                 'slug' => 'busines',
                 'display_name_singular' => 'Gimnasio',
-                'display_name_plural' => 'Gimnacios',
+                'display_name_plural' => 'Gimnasios',
                 'icon' => 'fa-solid fa-briefcase',
                 'model_name' => 'App\\Models\\Busine',
                 'policy_name' => NULL,
@@ -160,8 +160,8 @@ class DataTypesTableSeeder extends Seeder
                 'generate_permissions' => 1,
                 'server_side' => 0,
                 'details' => '{"order_column":null,"order_display_column":null,"order_direction":"asc","default_search_key":null,"scope":null}',
-                'created_at' => '2022-07-03 22:01:03',
-                'updated_at' => '2022-07-03 23:18:24',
+                'created_at' => '2022-07-11 08:57:54',
+                'updated_at' => '2022-07-11 09:01:09',
             ),
         ));
         

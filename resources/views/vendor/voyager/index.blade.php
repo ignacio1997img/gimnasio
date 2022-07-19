@@ -94,7 +94,7 @@
                             <div class="col-md-12">
                                 <div class="panel panel-bordered">
                                     <div class="panel-body">
-                                        <h3>Detalle de pagos realizados</h3>
+                                        <h3>Detalle de servicios realizados</h3>
                                         <table class="table table-bordered table-bordered">
                                             <thead>
                                                 <tr>
@@ -103,6 +103,7 @@
                                                     <th style="text-align: center">Servicios</th>
                                                     <th style="text-align: center">Plan</th>
                                                     <th style="text-align: right">Monto</th>
+                                                    <th style="text-align: center">Estado</th>
                                                     <th style="text-align: center">Registrado</th>
                                                     <th style="text-align: right">Acciones</th>
                                                 </tr>
@@ -153,7 +154,7 @@
                                                                 @endif
                                                             </b>                                        
                                                         </td>
-                                                        <td style="text-align: center">{{ $item->amount }}</td>
+                                                        <td style="text-align: right">{{ $item->amount }}</td>
                                                         <td style="text-align: center">
                                                             @if ($item->status)
                                                                 <label class="label label-success">Vigente</label>
@@ -176,12 +177,14 @@
                                                     </tr>
                                                     @php
                                                         $i = $i+1;
+                                                        $total+=$item->amount;
                                                     @endphp
                                                 @endforeach
                                                 <tr>
                                                     <td colspan="4" style="text-align: right"><b>TOTAL</b></td>
                                                     <td style="text-align: right"><b>{{ number_format($total, 2, ',', '.') }}</b></td>
-                                                    <td></td>
+                                                    <td colspan="3" style="text-align: right"></td>
+
                                                 </tr>
                                                 {{-- @foreach ($cashier->payments as $payment)
                                                     @php
@@ -237,7 +240,7 @@
                                                     <th>Detalle</th>
                                                     <th>Tipo</th>
                                                     <th class="text-right">Monto</th>
-                                                    <th class="text-right">Acciones</th>
+                                                    {{-- <th class="text-right">Acciones</th> --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -251,9 +254,9 @@
                                                         <td>{{ $item->description }}</td>
                                                         <td><label class="label label-{{ $item->type == 'ingreso' ? 'success' : 'danger' }}">{{ $item->type }}</label></td>
                                                         <td class="text-right">{{ $item->amount }}</td>
-                                                        <td class="text-right">
+                                                        {{-- <td class="text-right">
                                                             <button type="button" onclick="print_transfer({{ $item->id }})" title="Imprimir" class="btn btn-default"><i class="glyphicon glyphicon-print"></i> Imprimir</button>
-                                                        </td>
+                                                        </td> --}}
                                                     </tr>
                                                     @php
                                                         $cont++;
@@ -266,7 +269,7 @@
                                                 @endforeach
                                                 <tr>
                                                     <td colspan="3"><h5>TOTAL</h5></td>
-                                                    <td  colspan="2" class="text-right"><h4><small>Bs.</small> {{ number_format($total_movements, 2, ',', '.') }}</h4></td>
+                                                    <td  colspan="1" class="text-right"><h4><small>Bs.</small> {{ number_format($total_movements, 2, ',', '.') }}</h4></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -506,21 +509,18 @@
                     );
 
                     // Si retorna las opciones para generar recibo de traspaso a caja
-                    @if (session('id_transfer'))
-                        let id_transfer = "{{ session('id_transfer') }}";
-                        print_transfer(id_transfer);
-                    @endif
+                   
                 });
 
-                function print_transfer(id){
-                    window.open("{{ url('admin/cashiers/print/transfer') }}/"+id, "Entrega de fondos", `width=700, height=400`);
-                }
-                function print_recipe(id){
-                    window.open("{{ url('admin/planillas/pagos/print') }}/"+id, "Recibo", `width=700, height=500`)
-                }
-                function print_recipe_delete(id){
-                    window.open("{{ url('admin/planillas/pagos/delete/print') }}/"+id, "Recibo", `width=700, height=500`)
-                }
+                // function print_transfer(id){
+                //     window.open("{{ url('admin/cashiers/print/transfer') }}/"+id, "Entrega de fondos", `width=700, height=400`);
+                // }
+                // function print_recipe(id){
+                //     window.open("{{ url('admin/planillas/pagos/print') }}/"+id, "Recibo", `width=700, height=500`)
+                // }
+                // function print_recipe_delete(id){
+                //     window.open("{{ url('admin/planillas/pagos/delete/print') }}/"+id, "Recibo", `width=700, height=500`)
+                // }
             </script>
         @endif
     @endif

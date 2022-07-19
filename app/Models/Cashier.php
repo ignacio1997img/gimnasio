@@ -21,6 +21,13 @@ class Cashier extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function vault()
+    {
+        return $this->belongsTo(Vault::class, 'vault_id');
+    }
+
+
+
     // public function details(){
     //     return $this->hasMany(CashiersDetail::class);
     // }
@@ -32,6 +39,7 @@ class Cashier extends Model
     public function client(){
         return $this->hasMany(Client::class);
     }
+    
     // public function payments(){
     //     return $this->hasMany(CashiersPayment::class);
     // }

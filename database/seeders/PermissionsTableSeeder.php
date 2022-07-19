@@ -44,12 +44,17 @@ class PermissionsTableSeeder extends Seeder
 
         Permission::generateFor('settings');
 
+
         Permission::generateFor('people');
         Permission::generateFor('busines');
 
         Permission::generateFor('plans');
         Permission::generateFor('days');
         Permission::generateFor('services');
+        Permission::generateFor('providers');
+        Permission::generateFor('categories');
+        Permission::generateFor('articles');
+
 
         $keys = [
             'browse_vaults',

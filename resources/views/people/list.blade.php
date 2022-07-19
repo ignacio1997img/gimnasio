@@ -8,7 +8,10 @@
                     <th>CI</th>
                     <th>Fecha nac.</th>
                     <th>Telefono</th>
-                    <th>Acciones</th>
+                    @if (auth()->user()->hasRole('admin'))
+                        <th style="text-align: center">Gimnacio</th>
+                    @endif                    
+                    <th style="text-align: right">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,6 +42,9 @@
                     <td>{{ $item->ci }}</td>
                     <td>{{ date('d/m/Y', strtotime($item->birthdate)) }} <br> <small>{{ $age }} años</small> </td>
                     <td>{{ $item->phone }}</td>
+                    @if (auth()->user()->hasRole('admin'))
+                        <td style="text-align: center">{{$item->busine->name}}</td>
+                    @endif
                     <td class="no-sort no-click bread-actions text-right">
                         @if (auth()->user()->hasPermission('read_people'))
                             <a href="{{ route('voyager.people.show', ['id' => $item->id]) }}" title="Ver" class="btn btn-sm btn-warning view">

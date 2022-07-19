@@ -18,11 +18,14 @@
                             </div> --}}
                         </div>
                         <div class="col-md-4 text-right" style="margin-top: 30px">
-                            {{-- @if (auth()->user()->hasPermission('add_people')) --}}
-                                <a href="#" data-toggle="modal" data-target="#registar_modal" class="btn btn-success">
-                                    <i class="voyager-plus"></i> <span>Registrar</span>
+                            @if (auth()->user()->hasPermission('add_clients') && ! auth()->user()->hasRole('admin'))
+                                <a href="#" data-toggle="modal" data-target="#producto_modal" class="btn btn-dark">
+                                    <i class="fa-solid fa-tags"></i> <span>Vender Productos</span>
                                 </a>
-                            {{-- @endif --}}
+                                <a href="#" data-toggle="modal" data-target="#registar_modal" class="btn btn-success">
+                                    <i class="fa-solid fa-clipboard-user"></i> <span>Atender Cliente</span>
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -45,7 +48,7 @@
                                         <th style="text-align: center">Id</th>
                                         <th style="text-align: center">Cliente</th>
                                         <th style="text-align: center">Servicios</th>
-                                        <th style="text-align: center">Plan</th>
+                                        <th style="text-align: center">Detalles</th>
                                         <th style="text-align: center">Monto</th>
                                         <th style="text-align: center">Estado</th>                                        
                                         <th style="text-align: center">Registrado</th>                                        
@@ -57,40 +60,58 @@
                                         <tr>
                                             <td style="text-align: center">{{ $item->id }}</td>                                            
                                             <td>
-                                                <table>
-                                                    @php
-                                                        $image = asset('images/default.jpg');
-                                                        if($item->people->photo){
-                                                            $image = asset('storage/'.str_replace('.', '-cropped.', $item->people->photo));
-                                                        }
-                                                        $now = \Carbon\Carbon::now();
-                                                        $birthdate = new \Carbon\Carbon($item->people->birthdate);
-                                                        $age = $birthdate->diffInYears($now);
-                                                    @endphp
-                                                            <img src="{{ $image }}" alt="{{ $item->people->first_name }} {{ $item->people->last_name }}" style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px">
-                                                       
-                                                            {{ $item->people->first_name }} {{ $item->people->last_name }}
-                                                </table>
+                                                @if ($item->people_id)                                                    
+                                                    <table>                                                    
+                                                        @php
+                                                            $image = asset('images/default.jpg');
+                                                            if($item->people->photo){
+                                                                $image = asset('storage/'.str_replace('.', '-cropped.', $item->people->photo));
+                                                            }
+                                                            $now = \Carbon\Carbon::now();
+                                                            $birthdate = new \Carbon\Carbon($item->people->birthdate);
+                                                            $age = $birthdate->diffInYears($now);
+                                                        @endphp
+                                                                <img src="{{ $image }}" alt="{{ $item->people->first_name }} {{ $item->people->last_name }}" style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px">
+                                                        
+                                                                {{ $item->people->first_name }} {{ $item->people->last_name }}
+                                                    </table>
+                                                @endif
+
                                             </td>
-                                            <td style="text-align: center">{{ $item->service->name }}</td>
-                                            <td style="text-align: center">{{ $item->plan->name }} <br> 
-                                                @if ($item->plan_id != 4)
-                                                    <b>{{date('d/m/Y', strtotime($item->start))}} Hasta {{date('d/m/Y', strtotime($item->finish))}}</b>
+                                            <td style="text-align: center">{{ $item->service_id ? $item->service->name:'Productos' }}</td>
+                                            <td style="text-align: center">
+                                                @if ( $item->plan)
+                                                    Plan: {{ $item->plan->name}}
+                                                    <br> 
+                                                    @if ($item->plan_id != 4)
+                                                        <b>{{date('d/m/Y', strtotime($item->start))}} Hasta {{date('d/m/Y', strtotime($item->finish))}}</b>
+                                                    @else
+                                                        Dia: <small><b>{{ $item->day->name }}</b></small>
+                                                    @endif        
+                                                    <br>
+                                                    <b>Turno: 
+                                                        @if($item->hour == 1)
+                                                            Mañana
+                                                        @endif
+                                                        @if($item->hour == 2)
+                                                            Tarde
+                                                        @endif
+                                                        @if($item->hour == 3)
+                                                            Noche
+                                                        @endif
+                                                    </b>  
                                                 @else
-                                                    <small><b>{{ $item->day->name }}</b></small>
-                                                @endif        
-                                                <br>
-                                                <b>Turno: 
-                                                    @if($item->hour == 1)
-                                                        Mañana
-                                                    @endif
-                                                    @if($item->hour == 2)
-                                                        Tarde
-                                                    @endif
-                                                    @if($item->hour == 3)
-                                                        Noche
-                                                    @endif
-                                                </b>                                        
+                                                    {{-- {{$item[0]->item}} --}}
+                                                    @php
+                                                        $si = $item->item;
+                                                        $si->groupBy('itemEarnings')
+                                                    @endphp
+                                                    @foreach ($si as $data)
+                                                        <small><b>{{$data}}</b></small>
+                                                        <br>
+                                                    @endforeach
+                                                @endif
+                                                                                     
                                             </td>
                                             <td style="text-align: center">{{ $item->amount }}</td>
                                             <td style="text-align: center">
@@ -102,24 +123,24 @@
                                             </td>
                                             <td style="text-align: center">{{date('d/m/Y H:i:s', strtotime($item->created_at))}}<br><small>{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}.</small></td>
                                             <td style="text-align: right">
-                                                @if ($item->status && $item->cashier->status == "abierta")
-                                                    <a href="" title="Editar" class="btn btn-sm btn-primary" data-item="{{ $item}}" data-toggle="modal" data-target="#edit_modal">
-                                                        <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
-                                                    </a>
+                                                @if ( !auth()->user()->hasRole('admin') && !auth()->user()->hasRole('administrador'))                                                    
+                                                    @if ($item->status && $item->cashier->status == "abierta")
+                                                        <a href="" title="Editar" class="btn btn-sm btn-primary" data-item="{{ $item}}" data-toggle="modal" data-target="#edit_modal">
+                                                            <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
+                                                        </a>
+                                                    @endif
+                                                    @if ($item->cashier->status == "abierta")
+                                                        <button title="Borrar" class="btn btn-sm btn-danger delete" onclick="deleteItem('{{ route('clients.destroy', ['client' => $item->id]) }}')" data-toggle="modal" data-target="#delete-modal">
+                                                            <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Borrar</span>
+                                                        </button>
+                                                    @endif
                                                 @endif
-                                                @if ($item->cashier->status == "abierta")
-                                                    <button title="Borrar" class="btn btn-sm btn-danger delete" onclick="deleteItem('{{ route('clients.destroy', ['client' => $item->id]) }}')" data-toggle="modal" data-target="#delete-modal">
-                                                        <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Borrar</span>
-                                                    </button>
-                                                @endif
+
                                                 
                                             </td>
                                             
                                         </tr>
                                     @empty
-                                        <tr class="odd">
-                                            <td valign="top" colspan="6" class="dataTables_empty">No hay datos disponibles en la tabla</td>
-                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -130,7 +151,83 @@
         </div>
     </div>
     
-
+    {{-- vault add register producto modal --}}
+    <form id="form-search" action="{{ route('clients-article.store') }}" method="post">
+        @csrf
+        <input type="hidden" name="cashier_id" value="{{ $cashier? $cashier->id:'' }}">
+        <div class="modal fade" tabindex="-1" id="producto_modal" role="dialog">
+            <div class="modal-dialog modal-primary modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"><i class="fa-solid fa-tags"></i> Registrar Servicios</h4>
+                    </div>
+                    @if (!$cashier)
+                        <div class="alert alert-warning">
+                            <strong>Advertencia:</strong>
+                            <p>No puedes registrar un servicio debido a que no existe un registro de caja activo.</p>
+                        </div>
+                    @endif
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <small>Cliente.</small>
+                                    <select name="people_id" class="form-control select2">
+                                        <option value="">Seleccione una persona</option>
+                                        @foreach ($people as $item)
+                                            <option value="{{$item->id}}">{{$item->first_name}} {{$item->last_name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div> 
+                            
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <small>Articulo.</small>
+                                    <select id="article_id" class="form-control select2">
+                                        <option value="">Seleccione una categoria..</option>
+                                        @foreach ($article as $item)
+                                            <option data-item='@json($item)'>{{$item->name}} - {{$item->presentation}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>  
+                        <div id="dataTable" class="table-responsive">
+                            <div class="col-md-12" style="margin-top: 20px" id="div-empty-list">
+                                <h3 class="text-muted text-center">Lista vacía</h3>
+                            </div>
+                            <table class="table" style="display: none" id="table-list">
+                                <thead>
+                                    <th>Artículo</th>
+                                    <th style="width: 110px">Stock Disponible</th>
+                                    <th style="width: 110px">Precio Unitario</th>
+                                    <th style="width: 110px">Cant a Vender</th>
+                                    <th style="width: 110px">Ganancia Unitaria</th>
+                                    {{-- <th style="width: 110px">Venta crédito</th> --}}
+                                    {{-- <th @if (setting('ventas.precios_credito') != 2) style="display: none" @else style="width: 100px" @endif >Venta crédito</th> --}}
+                                    <th style="width: 20px"></th>
+                                </thead>
+                                <tbody id="table-detalle"></tbody>
+                                <tfoot>
+                                    <td colspan="4" style="text-align: left">Total</td>
+                                    <td colspan="1" style="text-align: right"><h4 id="total">Bs. 0.00</h4></td>
+                                    <td colspan="1" style="text-align: left"></td>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        @if ($cashier)
+                            <button type="submit" class="btn btn-success" id="btn_vender">Vender</button>
+                        @endif                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 
     {{-- vault add register modal --}}
     <form id="form-search" action="{{ route('clients.store') }}" method="post">
@@ -196,7 +293,7 @@
                                 <div class="form-group">
                                     <small>Cliente.</small>
                                     <select name="people_id" class="form-control select2" required>
-                                        <option value="">Seleccione una ppersona</option>
+                                        <option value="">Seleccione una persona</option>
                                         @foreach ($people as $item)
                                             <option value="{{$item->id}}">{{$item->first_name}} {{$item->last_name}}</option>
                                         @endforeach
@@ -381,11 +478,180 @@ small{font-size: 12px;
                         },
                         order: [[ 0, 'desc' ]],
             });
+            // $(".select2").select2({theme: "classic"});
             
             $('#plan_id').on('change',functionDay);
             $('#plan_id1').on('change',functionDay1);
+            $('#category').on('change', onselect_article);
+
+            var indexTable = 0;
+            var i=0;
+                $('#article_id').change(function(){
+                    // let producto = $('#article_id option:selected').val();
+                    // let nombre = $('#article_id option:selected').text();
+                    let producto = $('#article_id option:selected').data('item');
+                    // alert(producto);
+                    if(producto){
+                        addTr(indexTable, producto);
+                        indexTable += 1;
+                    }
+                });
+
          
-        })
+        });
+        var arrayarticle = [];
+        var total=0;
+
+
+            function addTr(indexTable, data){
+                let cantidad_precios = "2";
+
+                $('#table-detalle').append(`
+                    <tr id="tr-${indexTable}" class="tr-item">
+                        <td><input type="hidden" name="wherehouseDetail_id[]" class="form-control" value="${data.id}" required/>${data.name} - ${data.presentation} </td>
+                        <td>
+                            <input type="hidden" step="1" min="1" class="form-control imput-sm" value="${data.cant}" id="input-stock-disponible-${indexTable}" required/>
+                            <input type="number" step="1" min="1" class="form-control imput-sm" value="${data.cant}" disabled required/>
+                        </td>
+                        <td>
+                            <input type="hidden" step="1" min="1" class="form-control imput-sm" value="${data.itemEarnings}" id="input-precio-unitario-${indexTable}" required/>
+                            <input type="number" step="1" min="1" class="form-control imput-sm" value="${data.itemEarnings}" disabled required/>
+                        </td>
+                        <td>
+                            <input type="number" step="1" min="1" class="form-control imput-sm" name="cant_stock[]" onchange="subTotal(${indexTable})" onkeyup="subTotal(${indexTable})" id="input_cant-stock-${indexTable}" required/>
+                            <small style="font-size: 11px" id="cant_stock-${indexTable}"></small>
+                        </td>
+                        <td>
+                            <input type="hidden" step="1" min="1" name="total_pagar[]" class="form-control input_t" onchange="subTotal(${indexTable})" onkeyup="subTotal(${indexTable})" id="input_pagar-${indexTable}" required/>
+                            <input type="number" step="1" min="1" class="form-control" id="input_pagar_view-${indexTable}" required disabled/>
+                            <small style="font-size: 11px" id="ganancia_contado-${indexTable}"></small>
+                        </td>
+                        <td><button type="button" style="padding: 0px" onclick="removeTr(${indexTable})" class="btn btn-link"><i class="voyager-trash text-danger"></i></button></td>
+                    </tr>
+                `);
+                arrayarticle[indexTable]=0;
+                showHelp();
+                $('#article_id').val('').trigger('change');
+            }
+        
+            function subTotal(index){
+
+                let stock_disponible = $(`#input-stock-disponible-${index}`).val() ? parseFloat($(`#input-stock-disponible-${index}`).val()) : 0;
+                let precio_unitario = $(`#input-precio-unitario-${index}`).val() ? parseFloat($(`#input-precio-unitario-${index}`).val()) : 0;
+                let cant = $(`#input_cant-stock-${index}`).val() ? parseFloat($(`#input_cant-stock-${index}`).val()) : 0;
+               
+                $(`#cant_stock-${index}`).html(`${cant > stock_disponible ? '<i class="fa-solid fa-rectangle-xmark"></i>' : '<i class="fa-solid fa-circle-check"></i>'} `);
+                cant > stock_disponible  ? $(`#cant_stock-${index}`).addClass('text-danger') : $(`#cant_stock-${index}`).removeClass('text-danger');
+                cant <= stock_disponible  ? $(`#cant_stock-${index}`).addClass('text-success') : $(`#cant_stock-${index}`).removeClass('text-success');
+                
+                // cant > stock_disponible ? $('#btn_vender').attr('disabled', true) : $('#btn_vender').attr('disabled', false);
+
+                let pagar = cant * precio_unitario;
+
+                
+                // total= total + pagar;
+
+           
+                $(`#input_pagar-${index}`).val(cant > stock_disponible ? '0':pagar.toFixed(2));
+                $(`#input_pagar_view-${index}`).val(cant > stock_disponible ? '0':pagar.toFixed(2));
+
+                if(cant > stock_disponible)
+                {
+                    arrayarticle[index]=0;
+                }
+                else
+                {
+                    arrayarticle[index]=1;
+                }
+                btn();
+                $("#total").html("Bs. "+calcular_total().toFixed(2));
+
+
+                // let precio_venta_contado = $(`#input-precio_venta_contado-${index}`).val() ? parseFloat($(`#input-precio_venta_contado-${index}`).val()) : 0;
+                // // let precio_venta = $(`#input-precio_venta-${index}`).val() ? parseFloat($(`#input-precio_venta-${index}`).val()) : 0;
+                // // let precio_venta_alt = $(`#input-precio_venta_alt-${index}`).val() ? parseFloat($(`#input-precio_venta_alt-${index}`).val()) : 0;
+                
+                // let ganancia_contado = precio_venta_contado - precio_mayoritario;
+                // // let ganancia_credito = precio_venta - precio_mayoritario;
+                // // let ganancia_credito_alt = precio_venta_alt - precio_mayoritario;
+                
+                
+
+            }
+            function calcular_total()
+            {
+                let total = 0;
+                $(".input_t").each(function(){
+
+                    total += parseFloat($(this).val());
+                    // alert(parseFloat($(this).val()));
+                });
+                
+                return total;
+            }
+            
+            function removeTr(index){
+                $(`#tr-${index}`).remove();
+                arrayarticle[index]=1;
+                // $(`#input_pagar-${index}`).val(cant > stock_disponible ? '0':pagar.toFixed(2));
+                btn();
+                $("#total").html("Bs. "+calcular_total().toFixed(2));
+
+                showHelp();
+            }
+
+            function showHelp(){
+                let show = document.getElementsByClassName("tr-item").length > 0 ? false : true;
+                if(show){
+                    $('#div-empty-list').fadeIn('fast');
+                    $('#table-list').fadeOut();
+                }else{
+                    $('#div-empty-list').fadeOut('fast');
+                    $('#table-list').fadeIn();
+                }
+            }
+
+            function btn()
+            {
+                let i =0;
+                $('#btn_vender').attr('disabled', false)
+                for(i=0; i<arrayarticle.length; i++)
+                {                    
+                    if(arrayarticle[i] == 0)
+                    {
+                        // alert(0)
+                        $('#btn_vender').attr('disabled', true)
+                    }
+                }
+
+            }
+            
+
+
+
+
+            function onselect_article()
+            {
+                var id =  $(this).val();    
+                // alert(id)
+                if(id >=1)
+                {
+                    // alert(2)
+                    $.get('{{route('clients-ajax.article')}}/'+id, function(data){
+                        // alert(1)
+                        var html_article=    '<option value="">Seleccione un Articulo..</option>'
+                            for(var i=0; i<data.length; ++i)
+                            html_article += '<option value="'+data[i].id+'">'+data[i].name+' - '+data[i].presentation +'</option>'
+
+                        $('#article_id').html(html_article);           
+                    });
+                }
+                else
+                {
+                    var html_article=    ''       
+                    $('#article_id').html(html_article);
+                }
+            }
 
         function deleteItem(url){
             $('#delete_form').attr('action', url);
@@ -398,7 +664,7 @@ small{font-size: 12px;
         {
             
             id= $(this).val();
-            alert(id)
+            // alert(id)
             if(id>=1)
             {
                 if(id==4)    

@@ -4,6 +4,11 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use TCG\Voyager\Facades\Voyager;
+// use App\FormFields\UserIdFormField;
+// use App\Http\Controllers\BusineController;
+use App\FormFields\BusineIdFormField;
+
 
 
 class AppServiceProvider extends ServiceProvider
@@ -15,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        Voyager::addFormField(BusineIdFormField::class);
     }
 
     /**

@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AttentionController;
 use App\Http\Controllers\BusineController;
 use App\Http\Controllers\CashierController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\PeopleController;
+use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\VaultController;
+use App\Http\Controllers\WherehouseController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -27,10 +31,19 @@ Route::get('/', function () {
     return redirect('admin');
 });
 
-
 Route::group(['prefix' => 'admin'], function () {
+    
     Voyager::routes();
 
+    Route::resource('categories', CategoryController::class);
+    Route::post('categories/update', [CategoryController::class, 'update'])->name('categories.update');
+
+    Route::resource('articles', ArticleController::class);
+
+    Route::resource('providers', ProviderController::class);
+
+    Route::resource('wherehouses', WherehouseController::class);
+    Route::get('wherehouses/items-disponible', [WherehouseController::class, 'show'])->name('wherehouses-items.itemDisponible');
 
     Route::get('people', [PeopleController::class, 'index'])->name('voyager.people.index');
     Route::get('people/ajax/list/{search?}', [PeopleController::class, 'list']);
@@ -55,20 +68,23 @@ Route::group(['prefix' => 'admin'], function () {
     // Route::post('cashiers/amount/store', [CashierController::class, 'amount_store'])->name('cashiers.amount.store');
     // Route::post('cashiers/{cashier}/close/revert', [CashierController::class, 'close_revert'])->name('cashiers.close.revert');
     Route::get('cashiers/{cashier}/close/', [CashierController::class, 'close'])->name('cashiers.close');//para cerrar la caja el cajero
+    Route::post('cashiers/{cashier}/close/store', [CashierController::class, 'close_store'])->name('cashiers.close.store');
+
 
     Route::get('cashiers/print/open/{id?}', [CashierController::class, 'print_open'])->name('print.open');//para imprimir el comprobante cuando se abre una caja
 
 
     // Route::get('cashiers/print/transfer/{transfer}', [CashierController::class, 'print_transfer'])->name('print.transfer');
 
-    Route::get('planillas/pagos/print/{id}', [CashierController::class, 'planillas_pagos_print']);//proceso
-    Route::get('planillas/pagos/delete/print/{id}', [CashierController::class, 'planillas_pagos_delete_print']);//procesoo
+    // Route::get('planillas/pagos/print/{id}', [CashierController::class, 'planillas_pagos_print']);//proceso
+    // Route::get('planillas/pagos/delete/print/{id}', [CashierController::class, 'planillas_pagos_delete_print']);//procesoo
 
 
 
 
     Route::resource('clients', ClientController::class);
     Route::post('clients/update', [ClientController::class, 'update'])->name('clients.update');
+    Route::post('clients/article', [ClientController::class, 'articleStore'])->name('clients-article.store');
     // Route::delete('clients/delete', [ClientController::class, 'destroy'])->name('checks.delet');
     // Route::get('planillas/pagos/people/search', [AttentionController::class, 'planillas_pagos_people_search']);
 
@@ -82,6 +98,16 @@ Route::group(['prefix' => 'admin'], function () {
     Route::resource('client', ClientController::class);
 
     Route::resource('instructor', InstructorController::class);
+
+
+
+
+    //AJAX
+    Route::get('wherehouses/ajax/article/{id?}', [WherehouseController::class, 'ajaxArticle'])->name('wherehouses-ajax.article');
+
+
+
+    Route::get('clients/ajax/article/{id?}', [ClientController::class, 'ajaxArticle'])->name('clients-ajax.article');
 
 });
 
