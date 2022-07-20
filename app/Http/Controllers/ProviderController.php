@@ -46,7 +46,7 @@ class ProviderController extends Controller
             // $request->merge(['busine_id'=>$user->busine_id]);
             // $request->merge(['userRegister_id'=>$user->id]);
             $imagen = $this->agregar_imagenes($request->file('image'));
-            return "hola";
+            // return "hola";
             Provider::create([
                 'busine_id' => $user->busine_id,
                 'nit' => $request->nit,
@@ -57,13 +57,13 @@ class ProviderController extends Controller
                 'address'=> $request->address
 
             ]);
-            return 1;
+            // return 1;
             DB::commit();
             return redirect()->route('providers.index')->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success']);
 
         } catch (\Throwable $th) {
             DB::rollBack();
-            return 0;
+            // return 0;
             return redirect()->route('providers.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }
