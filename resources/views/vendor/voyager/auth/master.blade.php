@@ -27,7 +27,7 @@
 
     <style>
         body {
-            background-image:url('{{ Voyager::image( Voyager::setting("admin.bg_image"), asset("images/banner.jpg") ) }}');
+            background-image:url('{{ Voyager::image( Voyager::setting("admin.bg_image"), asset("images/banner.png") ) }}');
             background-color: {{ Voyager::setting("admin.bg_color", "#FFFFFF" ) }};
         }
         body.login .login-sidebar {
