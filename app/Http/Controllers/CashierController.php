@@ -21,8 +21,11 @@ class CashierController extends Controller
         $user = Auth::user();
         $vault = Vault::where('busine_id', $user->busine_id)->first();
         // return $vault;
-        $cashier = Cashier::where('deleted_at', null)->where('vault_id', $vault->id)->get();
-        // return $cashier;
+        $cashier ='';
+        if($vault)
+        {
+            $cashier = Cashier::where('deleted_at', null)->where('vault_id', $vault->id)->get();
+        }
         return view('cashier.browse', compact('cashier', 'vault'));
     }
 

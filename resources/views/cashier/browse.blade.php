@@ -19,7 +19,7 @@
                             </div> --}}
                         </div>
                         <div class="col-md-4 text-right" style="margin-top: 30px">
-                            @if ( !auth()->user()->hasRole('admin'))
+                            @if ( !auth()->user()->hasRole('admin') && $vault)
                                 <a href="{{ route('cashiers.create') }}" class="btn btn-success">
                                     <i class="voyager-plus"></i> <span>Crear</span>
                                 </a>
@@ -40,63 +40,70 @@
                 <div class="panel panel-bordered">
                     <div class="panel-body">                        
                         <div class="table-responsive">
-                            <table id="dataTable" class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align: center">Id</th>
-                                        <th style="text-align: center">Usuario</th>
-                                        <th style="text-align: center">Título</th>
-                                        <th style="text-align: center">Estado</th>
-                                        <th style="text-align: center">Apertura</th>
-                                        <th style="text-align: center">Cierre</th>
-                                        <th style="text-align: right">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($cashier as $item)
+                            @if ($vault)          
+                                <table id="dataTable" class="table table-hover">
+                                    <thead>
                                         <tr>
-                                            <td>{{$item->id}}</td>
-                                            <td style="width: 200pt; text-align: center">{{$item->user->name}}</td>
-                                            <td style="text-align: center">{{$item->title}}</td>
-                                            <td style="text-align: center">
-                                                <label class="label label-success">{{$item->status}}</label>
-                                            </td>
-                                            <td style="text-align: center">{{date('d/m/Y H:i:s', strtotime($item->created_at))}}<br><small>{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}.</small></td>
-                                            <td style="text-align: center">{{date('d/m/Y H:i:s', strtotime($item->close_at))}}<br><small>{{\Carbon\Carbon::parse($item->close_at)->diffForHumans()}}.</small></td>
-                            
-                                            <td style="text-align: right">
-                                                <a href="#" title="Ver" class="btn btn-sm btn-default pull-right" onclick="openWindow({{$item->id}})">
-                                                    <i class="voyager-file-text"></i> <span class="hidden-xs hidden-sm">Imprimir apertura</span>
-                                                </a>
-                                                <div class="no-sort no-click bread-actions text-right">
-                                                    @if(auth()->user()->hasPermission('read_income'))
-                                                        
-                                                        <a href="{{route('income_view',$item->id)}}" title="Ver" target="_blank" class="btn btn-sm btn-info view">
-                                                            <i class="voyager-file-text"></i> <span class="hidden-xs hidden-sm">Ver</span>
-                                                        </a>                                                                
-                                                    @endif
-                                                    @if($item->condicion == 1)
-                                                        @if(auth()->user()->hasPermission('edit_income'))
-                                                            <a href="" title="Editar" class="btn btn-sm btn-warning">
-                                                                <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
-                                                            </a>
-                                                        @endif
-                                                        @if(auth()->user()->hasPermission('delete_income'))
-                                                            <button title="Anular" class="btn btn-sm btn-danger delete" data-toggle="modal" data-id="{{$item->id}}" data-target="#myModalEliminar">
-                                                                <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Anular</span>
-                                                            </button>
-                                                        @endif
-                                                    @endif
-                                                </div>
-                                            </td>
+                                            <th style="text-align: center">Id</th>
+                                            <th style="text-align: center">Usuario</th>
+                                            <th style="text-align: center">Título</th>
+                                            <th style="text-align: center">Estado</th>
+                                            <th style="text-align: center">Apertura</th>
+                                            <th style="text-align: center">Cierre</th>
+                                            <th style="text-align: right">Acciones</th>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="7" style="text-align: center">Sin Datos</td>
-                                        </tr>
-                                    @endforelse                                   
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($cashier as $item)
+                                            <tr>
+                                                <td>{{$item->id}}</td>
+                                                <td style="width: 200pt; text-align: center">{{$item->user->name}}</td>
+                                                <td style="text-align: center">{{$item->title}}</td>
+                                                <td style="text-align: center">
+                                                    <label class="label label-success">{{$item->status}}</label>
+                                                </td>
+                                                <td style="text-align: center">{{date('d/m/Y H:i:s', strtotime($item->created_at))}}<br><small>{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}.</small></td>
+                                                <td style="text-align: center">{{date('d/m/Y H:i:s', strtotime($item->close_at))}}<br><small>{{\Carbon\Carbon::parse($item->close_at)->diffForHumans()}}.</small></td>
+                                
+                                                <td style="text-align: right">
+                                                    <a href="#" title="Ver" class="btn btn-sm btn-default pull-right" onclick="openWindow({{$item->id}})">
+                                                        <i class="voyager-file-text"></i> <span class="hidden-xs hidden-sm">Imprimir apertura</span>
+                                                    </a>
+                                                    <div class="no-sort no-click bread-actions text-right">
+                                                        @if(auth()->user()->hasPermission('read_income'))
+                                                            
+                                                            <a href="{{route('income_view',$item->id)}}" title="Ver" target="_blank" class="btn btn-sm btn-info view">
+                                                                <i class="voyager-file-text"></i> <span class="hidden-xs hidden-sm">Ver</span>
+                                                            </a>                                                                
+                                                        @endif
+                                                        @if($item->condicion == 1)
+                                                            @if(auth()->user()->hasPermission('edit_income'))
+                                                                <a href="" title="Editar" class="btn btn-sm btn-warning">
+                                                                    <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
+                                                                </a>
+                                                            @endif
+                                                            @if(auth()->user()->hasPermission('delete_income'))
+                                                                <button title="Anular" class="btn btn-sm btn-danger delete" data-toggle="modal" data-id="{{$item->id}}" data-target="#myModalEliminar">
+                                                                    <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Anular</span>
+                                                                </button>
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" style="text-align: center">Sin Datos</td>
+                                            </tr>
+                                        @endforelse                                   
+                                    </tbody>
+                                </table>
+                            @else
+                                <div class="alert alert-warning">
+                                    <strong>Advertencia:</strong>
+                                    <p>No se encuentra disponible porque no existe un registro de bóveda creada.</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
