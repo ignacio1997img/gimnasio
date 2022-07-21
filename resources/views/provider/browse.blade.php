@@ -64,8 +64,8 @@
                                                     @php
                                                         $image = asset('images/default.jpg');
                                                         if($item->image){
-                                                            $image = asset('storage/'.$item->image);
-
+                                                            // $image = asset('storage/'.$item->image);
+                                                            $image = asset('storage/'.str_replace('.', '_small.', $item->image));
                                                         }
                                                     @endphp
                                                             <img src="{{ $image }}" alt="" style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px">

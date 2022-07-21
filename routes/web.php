@@ -11,6 +11,7 @@ use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\VaultController;
 use App\Http\Controllers\WherehouseController;
+use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::resource('articles', ArticleController::class);
 
     Route::resource('providers', ProviderController::class);
+
+    Route::get('services', [ServiceController::class, 'index'])->name('voyager.services.index');
 
     Route::resource('wherehouses', WherehouseController::class);
     Route::get('wherehouses/items-disponible', [WherehouseController::class, 'show'])->name('wherehouses-items.itemDisponible');

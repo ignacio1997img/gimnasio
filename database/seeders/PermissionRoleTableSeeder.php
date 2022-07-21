@@ -33,6 +33,8 @@ class PermissionRoleTableSeeder extends Seeder
                                             table_name = "categories" or
                                             table_name = "articles" or
                                             table_name = "people" or
+                                            table_name = "services" or
+                                            `key` = "add_clients" or
                                             `key` = "browse_clear-cache"')->get();
         $role->permissions()->sync($permissions->pluck('id')->all());
 

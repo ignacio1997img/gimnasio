@@ -8,6 +8,7 @@ use TCG\Voyager\Facades\Voyager;
 // use App\FormFields\UserIdFormField;
 // use App\Http\Controllers\BusineController;
 use App\FormFields\BusineIdFormField;
+use App\FormFields\UserIdFormField;
 
 
 
@@ -21,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         Voyager::addFormField(BusineIdFormField::class);
+        Voyager::addFormField(UserIdFormField::class);
     }
 
     /**

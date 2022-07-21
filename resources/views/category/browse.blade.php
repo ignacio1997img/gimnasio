@@ -41,7 +41,9 @@
                                     <tr>
                                         <th style="text-align: center">Id</th>
                                         <th style="text-align: center">Categoria</th>
-                                        <th style="text-align: center">Gymnacio</th>
+                                        @if (auth()->user()->hasRole('admin'))
+                                            <th style="text-align: center">Gymnacio</th>
+                                        @endif
                                         <th style="text-align: center">Estado</th>     
                                         @if (!auth()->user()->hasRole('admin'))
                                             <th style="text-align: right">Acciones</th>
@@ -53,7 +55,9 @@
                                         <tr>
                                             <td style="text-align: center">{{ $item->id }}</td>   
                                             <td style="text-align: center">{{ $item->name }}</td>
-                                            <td style="text-align: center">{{ $item->busine->name }}</td>
+                                            @if (auth()->user()->hasRole('admin'))
+                                                <td style="text-align: center">{{ $item->busine->name }}</td>
+                                            @endif
                                             <td style="text-align: center">
                                                 @if ($item->status)
                                                     <label class="label label-success">Activo</label>

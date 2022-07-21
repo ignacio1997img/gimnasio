@@ -17,7 +17,7 @@ class CreatePlansTable extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->text('description')->nullable();
-            $table->smallInteger('status')->nullable();            
+            $table->smallInteger('status')->default(1);          
             $table->timestamps();
             $table->softDeletes();
         });

@@ -11,6 +11,8 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\Return_;
+// use Intervention\Image;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class ArticleController extends Controller
 {
@@ -48,34 +50,27 @@ class ArticleController extends Controller
             $image='';
 
             $file = $request->file('image');
+            
             if($file)
             {
-                $nombre_origen = $file->getClientOriginalName();
-                    
-                $newFileName = Str::random(20).time().'.'.$file->getClientOriginalExtension();
-                // return $newFileName;
-                    
-                $dir =  "Article/".$busine->id."-".$busine->name."/".date('F').date('Y');
-                    
-                Storage::makeDirectory($dir);
-                Storage::disk('public')->put($dir.'/'.$newFileName, file_get_contents($file));
-                $image = $dir."/".$newFileName;
+                $imagen = $this->agregar_imagenes($request->file('image'));
 
+                // $nombre_origen = $file->getClientOriginalName();
                     
-                    // $ok =DonacionArchivo::create([
-                    //     'entrada'               => 1,
-                    //     'nombre_origen'         => $nombre_origen,
-                    //     'donacioningreso_id'    => $request->id,
-                    //     'ruta'                  => $dir.'/'.$newFileName,
-                    //     'user_id'               => $user->id
-                    // ]);
-
+                // $newFileName = Str::random(20).time().'.'.$file->getClientOriginalExtension();
+                // // return $newFileName;
+                    
+                // $dir =  "Article/".$busine->id."-".$busine->name."/".date('F').date('Y');
+                    
+                // Storage::makeDirectory($dir);
+                // Storage::disk('public')->put($dir.'/'.$newFileName, file_get_contents($file));
+                // $image = $dir."/".$newFileName;                   
             }
             Article::create([
                 'category_id' => $request->category_id,
                 'name' => $request->name,
                 'presentation' => $request->presentation,
-                'image' => $image
+                'image' => $imagen
             ]);
             DB::commit();
             return redirect()->route('articles.index')->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success']);
@@ -84,6 +79,57 @@ class ArticleController extends Controller
             DB::rollBack();
             return redirect()->route('articles.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
+    }
+    public function agregar_imagenes($file){
+        // return $file;
+        Storage::makeDirectory('article/'.date('F').date('Y'));
+        // $base_name = str_random(20);
+        $base_name = Str::random(40);
+
+        // return $base_name;
+        
+        // imagen normal
+        $filename = $base_name.'.'.$file->getClientOriginalExtension();
+        $image_resize = Image::make($file->getRealPath())->orientate();
+        // return $filename;
+        $image_resize->resize(1200, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        
+        $path =  'article/'.date('F').date('Y').'/'.$filename;
+        $image_resize->save(public_path('../storage/app/public/'.$path));
+        $imagen = $path;
+
+        // imagen mediana
+        $filename_medium = $base_name.'_medium.'.$file->getClientOriginalExtension();
+        $image_resize = Image::make($file->getRealPath())->orientate();
+        $image_resize->resize(650, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $path_medium = 'article/'.date('F').date('Y').'/'.$filename_medium;
+        $image_resize->save(public_path('../storage/app/public/'.$path_medium));
+        // return 11;
+
+
+        // imagen pequeña
+        $filename_small = $base_name.'_small.'.$file->getClientOriginalExtension();
+        $image_resize = Image::make($file->getRealPath())->orientate();
+        $image_resize->resize(260, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $path_small = 'article/'.date('F').date('Y').'/'.$filename_small;
+        $image_resize->save(public_path('../storage/app/public/'.$path_small));
+
+        // imagen Recortada
+        $filename_cropped = $base_name.'_cropped.'.$file->getClientOriginalExtension();
+        $image_resize = Image::make($file->getRealPath())->orientate();
+        $image_resize->resize(300, 250, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $path_cropped = 'article/'.date('F').date('Y').'/'.$filename_cropped;
+        $image_resize->save(public_path('../storage/app/public/'.$path_cropped));
+
+        return $imagen;
     }
 
     public function update(Request $request)

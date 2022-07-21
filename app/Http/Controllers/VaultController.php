@@ -35,7 +35,7 @@ class VaultController extends Controller
 
 
 
-//para crear una nueva boveda
+    //para crear una nueva boveda
     public function store(Request $request)
     {
         try {
@@ -54,7 +54,7 @@ class VaultController extends Controller
     }
 
 
-
+    //para agregar movimiento a la  Boveda
     public function details_store($id, Request $request){
         // dd($request);
         // return $request;
@@ -109,9 +109,10 @@ class VaultController extends Controller
     }
 
     public function close($id){
+        // dd($id);
         $vault_closure = VaultsClosure::with('details')->where('vault_id', $id)->orderBy('id', 'DESC')->first();
         $date = $vault_closure ? $vault_closure->created_at : NULL;
-        // return $date;
+        // return $vault_closure;
         $vault = Vault::with(['details' => function($q) use($date){
                         if($date){
                             $q->where('created_at', '>', $date);
