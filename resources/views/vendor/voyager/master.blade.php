@@ -6,6 +6,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
     <meta name="assets-path" content="{{ route('voyager.voyager_assets') }}"/>
 
+    <title>{{setting('admin.title')}}</title>
+    <meta property="og:url"           content="{{url('')}}" />
+    {{-- <meta property="og:type"          content="" /> --}}
+    <meta property="og:title"         content="{{setting('site.title')}}" />
+    <meta property="og:description"   content="{{setting('site.description')}}" />
+    <meta property="og:image"         content="{{ asset('images/icon.png') }}" />
+
     @yield('meta')
 
     <!-- Google Fonts -->
