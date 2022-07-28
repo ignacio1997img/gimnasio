@@ -189,7 +189,7 @@
                                 <h3 class="text-muted">Detalles de movimiento <br> <small style="font-size: 12px">Los campos son opcionales y solo se deben rellenar con fines informativos.</small></h3><br>
                                 <div class="form-group text-center">
                                     <label class="radio-inline"><input type="radio" name="type" value="ingreso" checked>Ingreso</label> &nbsp;&nbsp;
-                                    <label class="radio-inline"><input type="radio" name="type" value="egreso">Egreso</label>
+                                    {{-- <label class="radio-inline"><input type="radio" name="type" value="egreso">Egreso</label> --}}
                                 </div>
                                 {{-- <div class="form-group">
                                     <label for="bill_number">N&deg; de cheque</label>
