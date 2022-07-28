@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\People;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PeopleController extends Controller
 {
@@ -36,6 +37,19 @@ class PeopleController extends Controller
                     ->where('deleted_at', NULL)->whereRaw($query_filter)->orderBy('id', 'DESC')->paginate($paginate);
                     // dd($data->links());
         return view('people.list', compact('data'));
+    }
+    public function store(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $people = People::create($request->all());
+            DB::commit();
+            return response()->json(['people' => $people]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            // dd($th);
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
     }
 
    

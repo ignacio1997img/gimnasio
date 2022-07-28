@@ -8,22 +8,21 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body" style="padding: 0px">
-                        <div class="col-md-8" style="padding: 0px">
+                        <div class="col-md-6" style="padding: 0px">
                             <h1 id="subtitle" class="page-title">
                                 <i class="voyager-basket"></i> Servicios
                             </h1>
-                            {{-- <div class="alert alert-info">
-                                <strong>Información:</strong>
-                                <p>Puede obtener el valor de cada parámetro en cualquier lugar de su sitio llamando <code>setting('group.key')</code></p>
-                            </div> --}}
                         </div>
-                        <div class="col-md-4 text-right" style="margin-top: 30px">
+                        <div class="col-md-6 text-right" style="margin-top: 30px">
                             @if (auth()->user()->hasPermission('add_clients') && ! auth()->user()->hasRole('admin'))
                                 <a href="#" data-toggle="modal" data-target="#producto_modal" class="btn btn-dark">
                                     <i class="fa-solid fa-tags"></i> <span>Vender Productos</span>
                                 </a>
                                 <a href="#" data-toggle="modal" data-target="#registar_modal" class="btn btn-success">
                                     <i class="fa-solid fa-clipboard-user"></i> <span>Atender Cliente</span>
+                                </a>
+                                <a href="#" title="Nuevo cliente" data-target="#modal-create-customer" data-toggle="modal" class="btn btn-primary">
+                                    <i class="fa-solid fa-person-circle-plus"></i> <span>Persona</span>
                                 </a>
                             @endif
                         </div>
@@ -701,6 +700,85 @@
         </div>
     </div>
 
+    {{-- Modal crear cliente --}}
+    <form action="{{route('people.store')}}" id="form-create-customer" method="POST">
+        <div class="modal fade" tabindex="-1" id="modal-create-customer" role="dialog">
+            <div class="modal-dialog modal-primary">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"><i class="fa-solid fa-person-circle-plus"></i> Agregar Personas</h4>
+                    </div>
+                    <div class="modal-body">
+                        @csrf
+                        @php
+                            $busine_id =\Auth::user()->busine_id;
+                        @endphp
+                        <input type="hidden" name="busine_id" value="{{$busine_id}}">
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <small>CI/NIT</small>
+                                    <input type="text" name="ci" id="ci" class="form-control" required placeholder="78559644">
+                                </div>
+                            </div> 
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <small>Sexo</small>
+                                    <select name="gender" id="gender" class="form-control select2">
+                                        <option value="" disabled selected>Seleccione una opción</option>
+                                        <option value="1">Masculino</option>
+                                        <option value="0">Femenino</option>
+                                    </select>
+                                </div>
+                            </div> 
+                        </div>  
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <small>Nombre.</small>
+                                    <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Juan">
+                                </div>
+                            </div> 
+                            
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <small>Apellido.</small>
+                                    <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Ortiz Fernandez">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <small>Fecha de Nacimiento.</small>
+                                    <input type="date" name="birthdate" id="birthdate" class="form-control">
+                                </div>
+                            </div> 
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <small>Telefono.</small>
+                                    <input type="number" name="phone" id="phone" placeholder="67285512" class="form-control">
+                                </div>
+                            </div> 
+                        </div>
+                        
+                        <div class="form-group">
+                            <small>Dirección</small>
+                            <textarea name="address" id="address" class="form-control" rows="3" placeholder="C/ 18 de nov. Nro 123 zona central"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <input type="submit" class="btn btn-primary btn-save-customer" value="Guardar">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 
 
 @stop
@@ -785,6 +863,37 @@ small{font-size: 14px;
                         indexTable += 1;
                     }
                 });
+
+
+
+                $('#form-create-customer').submit(function(e){
+                e.preventDefault();
+                $('.btn-save-customer').attr('disabled', true);
+                $('.btn-save-customer').val('Guardando...');
+                $.post($(this).attr('action'), $(this).serialize(), function(data){
+                    if(data.people.id){
+                        toastr.success('Persona registrada..', 'Éxito');
+                        $(this).trigger('reset');
+                    }else{
+                        toastr.error(data.error, 'Error');
+                    }
+                })
+                .always(function(){
+                    $('.btn-save-customer').attr('disabled', false);
+                    // $('.btn-save-customer').text('Guardar');
+                    $('.btn-save-customer').val('Guardar');
+                    $('#ci').val('');
+                    $('#first_name').val('');
+                    $('#last_name').val('');
+                    $('#phone').val('');
+                    $('#address').val('');
+                    $('#birthdate').val('');
+                    $('#gender').val('').trigger('change');
+
+
+                    $('#modal-create-customer').modal('hide');
+                });
+            });
 
          
         });
