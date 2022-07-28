@@ -148,7 +148,7 @@
                                                     </button>
                                                   
                                                     <ul class="dropdown-menu" role="menu">
-                                                        @if ($item->amount != $item->subAmount)
+                                                        @if ($item->amount != $item->subAmount && !auth()->user()->hasRole('admin'))
                                                             <li>
                                                                 <a href="#" data-toggle="modal" data-target="#payment-modal" data-item='@json($item)' title="Pagar" class="btn-payment">
                                                                     <i class="voyager-dollar"></i> <span class="hidden-xs hidden-sm">Pagar</span>

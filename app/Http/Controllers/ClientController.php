@@ -27,6 +27,12 @@ class ClientController extends Controller
         $service = Service::all();
         $plan = Plan::all();
         $user = Auth::user();
+        $query_filter= 'id = '.$user->busine_id;
+        if (Auth::user()->hasRole('admin'))
+        {
+            // return 1;
+            $query_filter =1;
+        }
         $people = People::where('deleted_at', null)->where('status', 1)->where('busine_id', $user->busine_id)->get();
         
         $category = Category::where('busine_id', $user->busine_id)->get();
@@ -45,51 +51,15 @@ class ClientController extends Controller
         $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
         // return $cashier;
         
-        $client = Client::whereHas('cashier.vault.busine', function($q)use($user){
-            $q->where('id', $user->busine_id);
+        $client = Client::whereHas('cashier.vault.busine', function($q)use($query_filter){
+            $q->whereRaw($query_filter);
         })
         ->where('deleted_at', null)->get();
 
-        $client = Client::whereHas('cashier.vault.busine', function($q)use($user){
-            $q->where('id', $user->busine_id);
-        })
-        ->where('deleted_at', null)->get();
-
-        // return $client;
-
-
-
-        // $date = date('Y-m-d'); 
-        // $cli = Client::where('status', 1)->where('deleted_at', null)->get();
-        // // return $cli;
-        // foreach($cli as $item)
-        // {
-            
-
-        //     if($item->start && $item->finish)
-        //     {
-        //         // $fin=Carbon::parse($item->finish);    
-        //         $fin=Carbon::parse($date);
-        //         $inicio=Carbon::parse($item->finish);
-        //         if( $fin > $inicio)
-        //         {
-        //             Client::where('id', $item->id)->update(['status'=>0]);
-        //         }
-        //     }
-        //     else
-        //     {
-                       
-        //         $fin=Carbon::parse($date);
-        //         $inicio = date_format($item->created_at, "Y-m-d");        
-        //         $inicio=Carbon::parse($inicio);
-        //         if( $fin > $inicio)
-        //         {
-        //             Client::where('id', $item->id)->update(['status'=>0]);
-        //         }
-        //     }
-        // }
-
-
+        // $client = Client::whereHas('cashier.vault.busine', function($q)use($user){
+        //     $q->where('id', $user->busine_id);
+        // })
+        // ->where('deleted_at', null)->get();
 
      
         return view('client.browse', compact('day', 'service', 'plan', 'people', 'cashier', 'client', 'article', 'category'));
