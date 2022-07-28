@@ -12,6 +12,7 @@ use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\VaultController;
 use App\Http\Controllers\WherehouseController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('categories/update', [CategoryController::class, 'update'])->name('categories.update');
 
     Route::resource('articles', ArticleController::class);
+    Route::post('articles/update', [ArticleController::class, 'update'])->name('articles.update');
 
     Route::resource('providers', ProviderController::class);
 
@@ -70,8 +72,10 @@ Route::group(['prefix' => 'admin'], function () {
     // Route::get('cashiers/{cashier}/amount', [CashierController::class, 'amount'])->name('cashiers.amount');
     // Route::post('cashiers/amount/store', [CashierController::class, 'amount_store'])->name('cashiers.amount.store');
     // Route::post('cashiers/{cashier}/close/revert', [CashierController::class, 'close_revert'])->name('cashiers.close.revert');
-    Route::get('cashiers/{cashier}/close/', [CashierController::class, 'close'])->name('cashiers.close');//para cerrar la caja el cajero
-    Route::post('cashiers/{cashier}/close/store', [CashierController::class, 'close_store'])->name('cashiers.close.store');
+    Route::get('cashiers/{cashier}/close/', [CashierController::class, 'close'])->name('cashiers.close');//para cerrar la caja el cajero vista 
+    Route::post('cashiers/{cashier}/close/store', [CashierController::class, 'close_store'])->name('cashiers.close.store'); //para que el cajerop cierre la caja 
+    Route::get('cashiers/{cashier}/confirm_close', [CashierController::class, 'confirm_close'])->name('cashiers.confirm_close');
+    Route::post('cashiers/{cashier}/confirm_close/store', [CashierController::class, 'confirm_close_store'])->name('cashiers.confirm_close.store');
 
 
     Route::get('cashiers/print/open/{id?}', [CashierController::class, 'print_open'])->name('print.open');//para imprimir el comprobante cuando se abre una caja
@@ -86,6 +90,7 @@ Route::group(['prefix' => 'admin'], function () {
 
 
     Route::resource('clients', ClientController::class);
+    Route::post('clients/adition/store', [ClientController::class, 'aditionStore'])->name('clients-adition.store');
     Route::post('clients/update', [ClientController::class, 'update'])->name('clients.update');
     Route::post('clients/article', [ClientController::class, 'articleStore'])->name('clients-article.store');
     // Route::delete('clients/delete', [ClientController::class, 'destroy'])->name('checks.delet');
@@ -111,6 +116,15 @@ Route::group(['prefix' => 'admin'], function () {
 
 
     Route::get('clients/ajax/article/{id?}', [ClientController::class, 'ajaxArticle'])->name('clients-ajax.article');
+    Route::get('clients/ajax/item/{id?}', [ClientController::class, 'ajaxItem'])->name('clients-ajax.item.modal');
+    Route::get('clients/ajax/adition/{id?}', [ClientController::class, 'ajaxAdition'])->name('clients-ajax.adition.modal');
+
+
+
+    Route::get('client/Service/baja', [ClientController::class, 'clientBaja'])->name('clients-ajax.baja');
+
+
+    Route::get('users/ajax/user/{id?}', [UserController::class, 'ajaxUser'])->name('user-ajax.user');
 
 });
 

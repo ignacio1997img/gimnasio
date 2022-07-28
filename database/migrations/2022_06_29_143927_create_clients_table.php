@@ -32,7 +32,10 @@ class CreateClientsTable extends Migration
             $table->date('start')->nullable();
             $table->date('finish')->nullable();
 
+            $table->decimal('subAmount',5,2)->nullable();
             $table->decimal('amount',8,2)->nullable();
+            $table->smallInteger('credit')->nullable();
+            
 
             $table->smallInteger('status')->default(1);
             $table->string('ip')->nullable();

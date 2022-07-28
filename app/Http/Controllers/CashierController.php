@@ -162,6 +162,7 @@ class CashierController extends Controller
     
     public function close_store($id, Request $request){
         // dd($request);
+        // return $request;
         DB::beginTransaction();
         try {
             $cashier = Cashier::findOrFail($id);
@@ -211,6 +212,61 @@ class CashierController extends Controller
         // dd($cashier);
         // $view = view('cashier.print-open', compact('cashier'));
         return view('cashier.print-open', compact('cashier', 'busine'));
+    }
+
+
+
+
+    //para confirmar el cierre de caja 
+    public function confirm_close($id)
+    {
+        $cashier = Cashier::with(['details' => function($q){
+            $q->where('deleted_at', NULL);
+        }])->where('id', $id)->first();
+
+        // return $cashier;
+
+        
+        if($cashier->status == 'cierre pendiente'){
+            return view('cashier.confirm_close', compact('cashier'));
+        }else{
+            // return redirect()->route('voyager.cashiers.index')->with(['message' => 'La caja ya no está abierta.', 'alert-type' => 'warning']);
+        }
+    }
+    public function confirm_close_store($id, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $cashier = Cashier::findOrFail($id);
+            $cashier->status = 'cerrada';
+            $cashier->save();
+            
+            $detail = VaultsDetail::create([
+                'user_id' => Auth::user()->id,
+                'vault_id' => $request->vault_id,
+                'description' => 'Devolución de la caja '.$cashier->title,
+                'type' => 'ingreso',
+                'status' => 'aprobado'
+            ]);
+
+            for ($i=0; $i < count($request->cash_value); $i++) { 
+                // if($request->quantity[$i]){
+                    VaultsDetailsCash::create([
+                        'vaults_detail_id' => $detail->id,
+                        'cashier_id' => $id,
+                        'cash_value' => $request->cash_value[$i],
+                        'quantity' => $request->quantity[$i],
+                    ]);
+                // }
+            }
+
+            DB::commit();
+            return redirect()->route('cashiers.index')->with(['message' => 'Caja cerrada exitosamente.', 'alert-type' => 'success', 'id_cashier_close' => $id]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            dd($th);
+            return redirect()->route('cashiers.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        }
     }
 
 }

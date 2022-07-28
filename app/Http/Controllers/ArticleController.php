@@ -30,11 +30,11 @@ class ArticleController extends Controller
 
         $category = Category::where('deleted_at', null)->where('status', 1)->whereRaw($query_filtro)->get();
 
-        $article = Article::with(['category.busine' => function($q)use($query_article){
+        $article = Article::whereHas('category.busine', function($q)use($query_article){
                     $q->whereRaw($query_article);
-                }])
+                })
                 ->where('deleted_at', null)->get();
-        // return $query_filtro;
+        // return $article;
         // dd($article);
         return view('article.browse', compact('category', 'article'));
     }
@@ -145,8 +145,18 @@ class ArticleController extends Controller
             {
                 $request->merge(['status'=>0]);
             }
+            $file = $request->file('image');
+            
+            if($file)
+            {
+                $imagen = $this->agregar_imagenes($request->file('image'));                 
+            }
             $article = Article::find($request->id);
             $article->update(['name'=>$request->name, 'category_id'=>$request->category_id, 'presentation'=>$request->presentation, 'status'=>$request->status]);
+            if($file)
+            {
+                $article->update(['image'=> $imagen]);
+            }
             DB::commit();
             return redirect()->route('articles.index')->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {

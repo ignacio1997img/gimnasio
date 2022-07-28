@@ -10,8 +10,10 @@ class Client extends Model
     use HasFactory;
     protected $fillable = [
         'cashier_id', 'service_id', 'plan_id', 'day_id', 'people_id', 'beforeImage', 'laterImage', 'beforeWeight',
-        'laterWeight', 'start', 'finish', 'status', 'ip', 'userRegister_id', 'userDelete_id', 'deleted_at', 'amount', 'hour'
+        'laterWeight', 'start', 'finish', 'status', 'ip', 'userRegister_id', 'userDelete_id', 'deleted_at', 'amount', 'hour',
+        'subAmount', 'credit'
     ];
+
 
     // public function user()
     // {
@@ -46,6 +48,15 @@ class Client extends Model
     public function item()
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userRegister_id');
+    }
+    public function adition()
+    {
+        return $this->hasMany(Adition::class, 'client_id');
     }
 
 

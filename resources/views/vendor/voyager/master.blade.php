@@ -151,6 +151,20 @@ if (\Illuminate\Support\Str::startsWith(Auth::user()->avatar, 'http://') || \Ill
 @if(!empty(config('voyager.additional_js')))<!-- Additional Javascript -->
     @foreach(config('voyager.additional_js') as $js)<script type="text/javascript" src="{{ asset($js) }}"></script>@endforeach
 @endif
+<script>
+    $(document).ready(function () {
+        setInterval(     
+            function () 
+            {       
+            //   $.get('{{route('clients-ajax.baja')}}', function(data){});     
+              $.get('{{route('clients-ajax.baja')}}', function(data){
+                        // alert(data);
+                    });      
+            // alert(3)     
+            }, 3000
+        );   
+    });
+</script>
 
 </body>
 </html>

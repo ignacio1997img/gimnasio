@@ -93,12 +93,12 @@
                                         // Asignar monto del último cierre a los cortes de billetes de apertura y cierre
                                         if($vault_closure){
                                             foreach($vault_closure->details as $detail){
-                                                dd($detail->cash_value);
+                                                // dd($detail->cash_value);
                                                 $vault_close[$detail->cash_value]['open'] += $detail->quantity;
                                                 $vault_close[$detail->cash_value]['close'] += $detail->quantity;
                                             }
                                         }
-                                        dd($vault_close);
+                                        // dd($vault_close);
 
                                         // Agregar o restar a los cortes de billetes de cierre según los movimiento de bóveda
                                         if($vault){

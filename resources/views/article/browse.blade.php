@@ -123,7 +123,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa-solid fa-sitemap"></i> Registrar Categorias</h4>
+                            <h4 class="modal-title"><i class="fa-solid fa-prescription-bottle"></i> Registrar Articulo</h4>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -171,7 +171,7 @@
         </form>
 
             {{-- vault edit register modal --}}
-            <form id="form-search" action="{{ route('categories.update') }}" method="post">
+            <form id="form-search" action="{{ route('articles.update') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 {{-- <input type="hidden" name="cashier_id" value="{{ $cashier? $cashier->id:'' }}"> --}}
                 <div class="modal fade" tabindex="-1" id="edit_modal" role="dialog">
@@ -179,7 +179,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title"><i class="fa-solid fa-sitemap"></i> Editar Categorias</h4>
+                                <h4 class="modal-title"><i class="fa-solid fa-prescription-bottle"></i> Editar Articulo</h4>
                             </div>
                             <div class="modal-body">
                                 <input type="hidden" name="id" id="id">

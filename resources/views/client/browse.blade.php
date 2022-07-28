@@ -1,7 +1,7 @@
 @extends('voyager::master')
 
 @section('page_title', 'Viendo Datos Personales')
-
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @section('page_header')
     <div class="container-fluid">
         <div class="row">
@@ -9,8 +9,8 @@
                 <div class="panel panel-bordered">
                     <div class="panel-body" style="padding: 0px">
                         <div class="col-md-8" style="padding: 0px">
-                            <h1 class="page-title">
-                                <i class="fa-solid fa-dumbbell"></i> Servicios
+                            <h1 id="subtitle" class="page-title">
+                                <i class="voyager-basket"></i> Servicios
                             </h1>
                             {{-- <div class="alert alert-info">
                                 <strong>Información:</strong>
@@ -50,14 +50,19 @@
                                         <th style="text-align: center">Servicios</th>
                                         <th style="text-align: center">Detalles</th>
                                         <th style="text-align: center">Monto</th>
+                                        <th style="text-align: center">Deuda</th>
                                         <th style="text-align: center">Estado</th>                                        
                                         <th style="text-align: center">Registrado</th>                                        
                                         <th style="text-align: right">Acciones</th>
                                     </tr>
                                 </thead>
+                                @php
+                                    // dd($cashier);
+                                @endphp
                                 <tbody>
                                     @forelse ($client as $item)
                                         <tr>
+                                            
                                             <td style="text-align: center">{{ $item->id }}</td>                                            
                                             <td>
                                                 @if ($item->people_id)                                                    
@@ -75,6 +80,8 @@
                                                         
                                                                 {{ $item->people->first_name }} {{ $item->people->last_name }}
                                                     </table>
+                                                @else
+                                                    <img src="{{ asset('images/icono-anonimato.png') }}" alt="" style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px">
                                                 @endif
 
                                             </td>
@@ -101,19 +108,31 @@
                                                         @endif
                                                     </b>  
                                                 @else
-                                                    {{-- {{$item[0]->item}} --}}
                                                     @php
-                                                        $si = $item->item;
-                                                        $si->groupBy('itemEarnings')
+                                                        $articles = \DB::table('items as i')
+                                                            ->join('wherehouse_details as w', 'w.id', 'i.wherehouseDetail_id')
+                                                            ->join('articles as a', 'a.id', 'w.article_id')
+                                                            ->where('i.client_id', $item->id)->where('i.deleted_at', null)
+                                                            ->select('a.name','a.presentation', DB::raw("SUM(i.item) as cant"), DB::raw("SUM(i.amount) as money"))
+                                                            ->groupBy('i.indice')->get();
                                                     @endphp
-                                                    @foreach ($si as $data)
-                                                        <small><b>{{$data}}</b></small>
+                                                    @foreach ($articles as $ar)
+                                                        <small><b>{{$ar->name}}-{{$ar->presentation}}</b></small>
                                                         <br>
+                                                        <small><b>Cantidad: {{$ar->cant}}    Venta:{{$ar->money}}</b></small>
+                                                        <br><br><br>
                                                     @endforeach
                                                 @endif
                                                                                      
                                             </td>
-                                            <td style="text-align: center">{{ $item->amount }}</td>
+                                            <td style="text-align: center">{{ $item->amount }}</td> 
+                                            <td style="text-align: center">
+                                                @if ($item->amount == $item->subAmount)
+                                                    <label class="label label-success">Pagado</label>
+                                                @else
+                                                    <label class="label label-warning">{{$item->amount - $item->subAmount}}</label>
+                                                @endif
+                                            </td>
                                             <td style="text-align: center">
                                                 @if ($item->status)
                                                     <label class="label label-success">Vigente</label>
@@ -123,18 +142,42 @@
                                             </td>
                                             <td style="text-align: center">{{date('d/m/Y H:i:s', strtotime($item->created_at))}}<br><small>{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}.</small></td>
                                             <td style="text-align: right">
-                                                @if ( !auth()->user()->hasRole('admin') && !auth()->user()->hasRole('administrador'))                                                    
-                                                    @if ($item->status && $item->cashier->status == "abierta")
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                        Más <span class="caret"></span>
+                                                    </button>
+                                                  
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        @if ($item->amount != $item->subAmount)
+                                                            <li>
+                                                                <a href="#" data-toggle="modal" data-target="#payment-modal" data-item='@json($item)' title="Pagar" class="btn-payment">
+                                                                    <i class="voyager-dollar"></i> <span class="hidden-xs hidden-sm">Pagar</span>
+                                                                </a>
+                                                            </li>
+                                                        @endif
+                                                        <li>
+                                                            <a href="" target="_blank" title="Imprimir">
+                                                                <i class="glyphicon glyphicon-print"></i> <span class="hidden-xs hidden-sm">Imprimir</span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                @if ( !auth()->user()->hasRole('admin'))                                                    
+                                                    {{-- @if ($item->status && $item->cashier->status == "abierta" && $cashier->id == $item->cashier_id)
                                                         <a href="" title="Editar" class="btn btn-sm btn-primary" data-item="{{ $item}}" data-toggle="modal" data-target="#edit_modal">
                                                             <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
                                                         </a>
-                                                    @endif
-                                                    @if ($item->cashier->status == "abierta")
+                                                    @endif --}}
+                                                    <br>
+                                                    @if ($item->status && $item->cashier->status == "abierta" && $cashier->id == $item->cashier_id)
                                                         <button title="Borrar" class="btn btn-sm btn-danger delete" onclick="deleteItem('{{ route('clients.destroy', ['client' => $item->id]) }}')" data-toggle="modal" data-target="#delete-modal">
                                                             <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Borrar</span>
                                                         </button>
                                                     @endif
                                                 @endif
+                                                <a href="#" data-toggle="modal" data-target="#show-modal" data-item='@json($item)' data-user="{{$item->user->name}}" title="Ver" class="btn btn-sm btn-warning view">
+                                                    <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Ver</span>
+                                                </a>
 
                                                 
                                             </td>
@@ -188,7 +231,7 @@
                                     <select id="article_id" class="form-control select2">
                                         <option value="">Seleccione una categoria..</option>
                                         @foreach ($article as $item)
-                                            <option data-item='@json($item)'>{{$item->name}} - {{$item->presentation}}</option>
+                                            <option data-item='@json($item)'>{{$item->name}} - {{$item->presentation}} {{$item->cant}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -196,7 +239,10 @@
                         </div>  
                         <div id="dataTable" class="table-responsive">
                             <div class="col-md-12" style="margin-top: 20px" id="div-empty-list">
-                                <h3 class="text-muted text-center">Lista vacía</h3>
+                                <h4 class="text-center text-muted" style="margin-top: 50px">
+                                    <i class="glyphicon glyphicon-shopping-cart" style="font-size: 50px"></i> <br><br>
+                                    Lista de venta vacía
+                                </h4>
                             </div>
                             <table class="table" style="display: none" id="table-list">
                                 <thead>
@@ -216,6 +262,29 @@
                                     <td colspan="1" style="text-align: left"></td>
                                 </tfoot>
                             </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <small class="control-label">Pago al Credito</small>
+                                    <span class="voyager-question text-info pull-left" data-toggle="tooltip" data-placement="left" title="Seleccione si el pago es al credito."></span>
+                                    <input 
+                                        type="checkbox" 
+                                        name="credits"
+                                        id="toggleswitchs" 
+                                        onclick="myFunctions()"
+                                        data-on="Si" 
+                                        data-off="No" 
+                                    >
+                                </div>
+                            </div>
+                            <div class="col-sm-3"id="texts" style="display:none">
+                                <div class="form-group">
+                                    <small>Monto Recibido.</small>
+                                    <input type="number" name="subAmount" id="input-subAmount" min="0" step="0.1" class="form-control" placeholder="Monto recibo Bs.">
+
+                                </div>
+                            </div>                               
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -278,7 +347,7 @@
                             </div> 
                         </div>
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <div class="form-group">
                                     <small>Turno.</small>
                                     <select name="hour" class="form-control select2" required>
@@ -299,13 +368,40 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>  
-                            <div class="col-sm-2">
+                            </div>   
+                            <div class="col-sm-3">
                                 <div class="form-group">
-                                    <small>Monto Bs.</small>
-                                    <input type="number" class="form-control" name="amount">
+                                    <small>Monto Total.</small>
+                                    <input type="number" class="form-control" placeholder="Monto Total a Pagar" min="0" step="0.1" name="amount">
                                 </div>
-                            </div>  
+                            </div>                    
+                        </div>
+                        
+                        
+
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <small class="control-label">Pago al Credito</small>
+                                    <span class="voyager-question text-info pull-left" data-toggle="tooltip" data-placement="left" title="Seleccione si el pago es al credito."></span>
+                                    <input 
+                                        type="checkbox" 
+                                        name="credit"
+                                        id="toggleswitch" 
+                                        onclick="myFunction()"
+                                        data-on="Si" 
+                                        data-off="No" 
+                                    >
+                                </div>
+                            </div>
+                            <div class="col-sm-3"id="text" style="display:none">
+                                <div class="form-group">
+                                    <small>Monto Recibido.</small>
+                                    <input type="number" name="subAmount" id="input-subAmount" min="0" step="0.1" class="form-control" placeholder="Monto recibo Bs.">
+
+                                </div>
+                            </div>                               
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -318,6 +414,51 @@
             </div>
         </div>
     </form>
+
+
+        {{-- Payment modal --}}
+        <form action="{{ route('clients-adition.store') }}" id="form-payment" method="POST">
+            @csrf
+            <div class="modal modal-primary fade" tabindex="-1" id="payment-modal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><i class="voyager-dollar"></i> Agregar pago</h4>
+                        </div>
+                        @if (!$cashier)
+                            <div class="alert alert-warning">
+                                <strong>Advertencia:</strong>
+                                <p>No puedes registrar un servicio debido a que no existe un registro de caja activo.</p>
+                            </div>
+                        @endif
+                        <div class="modal-body">
+                            <input type="hidden" name="cashier_id" value="{{ $cashier? $cashier->id:'' }}">
+                            <input type="hidden" name="client_id" id="client_id">
+                            <div class="form-group">
+                                <label for="subAmount">Monto</label>
+                                <input type="number" class="form-control" name="subAmount" min="1" step="0.1" placeholder="Monto" required>
+                            </div>
+                            {{-- <div class="form-group">
+                                <label for="next_payment">Fecha del siguiente pago</label>
+                                <input type="date" class="form-control" name="next_payment" min="{{ date('Y-m-d') }}" >
+                            </div> --}}
+                            <div class="form-group">
+                                <label for="observation">Observaciones</label>
+                                <textarea class="form-control" name="observation" placeholder="Observaciones" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            {{-- <input type="submit" class="btn btn-dark delete-confirm" value="Pagar"> --}}
+                            @if ($cashier)
+                                <button type="submit" class="btn btn-dark">Pagar</button>
+                            @endif 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
 
     {{-- editar --}}
     <form id="form-search" action="{{ route('clients.update') }}" method="post">
@@ -431,11 +572,142 @@
     </div>
 
 
+
+
+
+    <div class="modal fade" tabindex="-1" id="show-modal" role="dialog">
+        <div class="modal-dialog modal-warning modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"><i class="voyager-basket"></i> Detalles de la Venta</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6" style="margin-bottom:0;">
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">Cliente</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                <p id="label-customer">Value</p>
+                            </div>
+                            <hr style="margin:0;">
+                        </div>
+                        <div class="col-md-6" style="margin-bottom:0;">
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">Registrado por</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                <p id="label-user">Value</p>
+                            </div>
+                            <hr style="margin:0;">
+                        </div>
+                        <div class="col-md-6" style="margin-bottom:0;">
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">Fecha de venta</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                <p id="label-date">Value</p>
+                            </div>
+                            <hr style="margin:0;">
+                        </div>
+                        <div class="col-md-6" style="margin-bottom:0;">
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">Total</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                <p id="label-total">Value</p>
+                            </div>
+                            <hr style="margin:0;">
+                        </div>
+                        {{-- <div class="col-md-6" style="margin-bottom:0;">
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">Creado el</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                <p id="label-created_at">Value</p>
+                            </div>
+                            <hr style="margin:0;">
+                        </div> --}}
+                        <div class="col-md-6" style="margin-bottom:0;">
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">Estado</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                <p id="label-status">Value</p>
+                            </div>
+                            <hr style="margin:0;">
+                        </div>
+                        {{-- <div class="col-md-12">
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">Observaciones</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                <p id="label-observations">Value</p>
+                            </div>
+                            <hr style="margin:0;">
+                        </div> --}}
+                        <div class="col-md-12">
+                            <table id="detalle" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th colspan="6" class="text-center">Detalles de venta</th>
+                                    </tr>
+                                    <tr>
+                                        <th>N&deg;</th>
+                                        <th>Servicio</th>
+                                        <th>Detalles</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio</th>
+                                        <th class="text-right">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="detallepago" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th colspan="4" class="text-center">Detalles de pagos</th>
+                                    </tr>
+                                    <tr>
+                                        <th>N&deg;</th>
+                                        {{-- <th>Registrado por</th> --}}
+                                        <th>Fecha</th>
+                                        <th>Observaciones</th>
+                                        <th class="text-right">Monto</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-right"><b>PAGO TOTAL</b></td>
+                                        <td class="text-right"><b style="font-size: 18px" id="label-total-payment">0,00 Bs.</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-right"><b>DEUDA TOTAL</b></td>
+                                        <td class="text-right"><b style="font-size: 18px" id="label-debt">0,00 Bs.</b></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-right" data-dismiss="modal">cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 @stop
 
 @section('css')
 <style>
-small{font-size: 12px;
+small{font-size: 14px;
         color: rgb(44, 44, 44);
         font-weight: bold;
     }
@@ -445,9 +717,9 @@ small{font-size: 12px;
 
 @section('javascript')
     <script>
+
         $(function()
         {
-            // alert(3)
             $('#dataTable').DataTable({
                     language: {
                             // "order": [[ 0, "desc" ]],
@@ -477,6 +749,7 @@ small{font-size: 12px;
                             }
                         },
                         order: [[ 0, 'desc' ]],
+
             });
             // $(".select2").select2({theme: "classic"});
             
@@ -486,12 +759,28 @@ small{font-size: 12px;
 
             var indexTable = 0;
             var i=0;
+            
                 $('#article_id').change(function(){
                     // let producto = $('#article_id option:selected').val();
                     // let nombre = $('#article_id option:selected').text();
+                    // alert(2)
                     let producto = $('#article_id option:selected').data('item');
-                    // alert(producto);
-                    if(producto){
+                    var ok=true;
+                    
+                    if(indexTable>0)
+                    {
+                        $(".wherhouse_article").each(function(){
+                            id = parseFloat($(this).val());
+                            if(producto.id == id)
+                            {
+                                ok=false;
+                                alert("El Articulo ya existe")
+                            }
+
+                        });
+                    }
+                
+                    if(producto && ok){
                         addTr(indexTable, producto);
                         indexTable += 1;
                     }
@@ -508,7 +797,7 @@ small{font-size: 12px;
 
                 $('#table-detalle').append(`
                     <tr id="tr-${indexTable}" class="tr-item">
-                        <td><input type="hidden" name="wherehouseDetail_id[]" class="form-control" value="${data.id}" required/>${data.name} - ${data.presentation} </td>
+                        <td><input type="hidden" name="wherehouseDetail_id[]" class="form-control wherhouse_article" value="${data.id}" required/>${data.name} - ${data.presentation} </td>
                         <td>
                             <input type="hidden" step="1" min="1" class="form-control imput-sm" value="${data.cant}" id="input-stock-disponible-${indexTable}" required/>
                             <input type="number" step="1" min="1" class="form-control imput-sm" value="${data.cant}" disabled required/>
@@ -564,27 +853,13 @@ small{font-size: 12px;
                     arrayarticle[index]=1;
                 }
                 btn();
-                $("#total").html("Bs. "+calcular_total().toFixed(2));
-
-
-                // let precio_venta_contado = $(`#input-precio_venta_contado-${index}`).val() ? parseFloat($(`#input-precio_venta_contado-${index}`).val()) : 0;
-                // // let precio_venta = $(`#input-precio_venta-${index}`).val() ? parseFloat($(`#input-precio_venta-${index}`).val()) : 0;
-                // // let precio_venta_alt = $(`#input-precio_venta_alt-${index}`).val() ? parseFloat($(`#input-precio_venta_alt-${index}`).val()) : 0;
-                
-                // let ganancia_contado = precio_venta_contado - precio_mayoritario;
-                // // let ganancia_credito = precio_venta - precio_mayoritario;
-                // // let ganancia_credito_alt = precio_venta_alt - precio_mayoritario;
-                
-                
-
+                $("#total").html("Bs. "+calcular_total().toFixed(2));               
             }
             function calcular_total()
             {
                 let total = 0;
                 $(".input_t").each(function(){
-
                     total += parseFloat($(this).val());
-                    // alert(parseFloat($(this).val()));
                 });
                 
                 return total;
@@ -619,15 +894,34 @@ small{font-size: 12px;
                 {                    
                     if(arrayarticle[i] == 0)
                     {
-                        // alert(0)
                         $('#btn_vender').attr('disabled', true)
                     }
                 }
 
             }
-            
+            function myFunction() {
+                var checkBox = document.getElementById("toggleswitch");
+                var text = document.getElementById("text");
+                if (checkBox.checked == true){
+                    text.style.display = "block";
+                    $('#input-subAmount').attr('required', 'required');
+                } else {
+                    text.style.display = "none";
+                    $('#input-subAmount').removeAttr('required');
+                }
+            }
 
-
+            function myFunctions() {
+                var checkBox = document.getElementById("toggleswitchs");
+                var text = document.getElementById("texts");
+                if (checkBox.checked == true){
+                    text.style.display = "block";
+                    $('#input-subAmounts').attr('required', 'required');
+                } else {
+                    text.style.display = "none";
+                    $('#input-subAmounts').removeAttr('required');
+                }
+            }
 
 
             function onselect_article()
@@ -656,9 +950,6 @@ small{font-size: 12px;
         function deleteItem(url){
             $('#delete_form').attr('action', url);
         }
-
-        
-
 
         function functionDay()
         {
@@ -743,7 +1034,7 @@ small{font-size: 12px;
             }
         }
 
-        $('#edit_modal').on('show.bs.modal', function (event) {
+            $('#edit_modal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget) //captura valor del data-empresa=""
 
                 var id = button.data('id')
@@ -795,50 +1086,148 @@ small{font-size: 12px;
                     modal.find('.modal-body #start').val(item.start)
                     modal.find('.modal-body #finish').val(item.finish)
 
-                }  
-                
-                // if(item.checkcategoria_id == 2)
-                // {
-                //     var div =   '<div class="col-md-12">'
-                //         div+=           '<div class="input-group-prepend">'
-                //         div+=                '<span class="input-group-text"><b>Tipo:</b></span>'
-                //         div+=            '</div>'
-                //         div+=            '<select name="tipopagos" id="select-tipo" class="form-control select2" required>'
-                //         div+=                '<option value="">Seleccione un tipo..</option>'
-                //         div+=                '<option value="1">Personal Eventual.</option>'
-                //         div+=                '<option value="2">Funcionamiento.</option>'
-                //         div+=                '<option value="3">Consultoria.</option>'                                        
-                //         div+=            '</select>'
-                //         div+=        '</div>'
-                //     $('#tips').html(div);
-                // }
-                // else
-                // {
-                //     div ='';
-                //     $('#tips').html(div);
-                // }
-                // modal.find('.modal-body #select-tipo').val(item.tipopagos).trigger('change')   
-                
-                // if(item.checkcategoria_id == 4 || item.tipopagos == 3)
-                // {
-                //     var div =   '<div class="col-md-12">'
-                //         div+=           '<div class="input-group-prepend">'
-                //         div+=                '<span class="input-group-text"><b>Ci:</b></span>'
-                //         div+=            '</div>'
-                //         div+=            '<input type="text" id="ci" class="form-control" name="ci">'
-                //         div+=        '</div>'
-                //     $('#div_cis').html(div);
-                // }
-                // else
-                // {
-                //     div ='';
-                //     $('#div_cis').html(div);
-                // }
-                // modal.find('.modal-body #ci').val(item.ci)   
+                }                  
+            });
 
 
+
+            $('#payment-modal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget) //captura valor del data-empresa=""
+                var item = button.data('item')
+
+                var modal = $(this)
+                modal.find('.modal-body #client_id').val(item.id)
                 
             });
+            
+            $('#show-modal').on('show.bs.modal', function (event)
+            {
+                var button = $(event.relatedTarget);
+                var item = button.data('item');
+                var user = button.data('user');
+                var modal = $(this);
+                modal.find('.modal-body #label-customer').text(item.people ? item.people.first_name+' '+item.people.last_name: 'Sin nombre');
+                modal.find('.modal-body #label-user').text(user);
+                modal.find('.modal-body #label-date').text(item.created_at.toLocaleString());
+                modal.find('.modal-body #label-total').text(item.amount);
+                if(item.amount == item.subAmount)
+                {
+                    modal.find('.modal-body #label-status').text('Pagado');
+                }
+                else
+                {
+                    modal.find('.modal-body #label-status').text('Pendiente');
+                }
+
+                $('#detalle tbody').empty();
+                $('#detallepago tbody').empty(); 
+                if(item.service_id)
+                {
+                    var dia ='';
+                    var date = '';
+                    if (item.plan_id != 4)
+                    {
+                        dia =`<b>${item.start} Hasta ${item.finish}</b>`
+                    }
+                    else
+                    {
+                        dia = `Dia: <small><b>${item.day.name }</b></small>`
+                    }
+
+
+                    if(item.hour == 1)
+                    {
+                        date = 'Mañana';
+                    }
+                    if(item.hour == 2)
+                    {
+                        date = 'Tarde';
+                    }
+                    if(item.hour ==3)
+                    {
+                        date = 'Noche';
+                    }
+
+
+                    $('#detalle tbody').append(`
+                        <tr>
+                            <td style="width: 50px">1</td>
+                            <td>${item.service.name}                            
+                            </td>
+                            <td>
+                                Plan: ${item.plan.name}
+                                <br> 
+                                                        ${dia}     
+                                                        <br>
+                                                        <b>Turno: 
+                                                            ${date}
+                                                        </b>
+                            </td>
+                            <td>1</td>
+                            <td>${item.amount}</td>
+                            <td class="text-right"><b>${item.amount} Bs.</b></td>
+                        </tr>
+                    `);
+                }
+                else
+                {
+
+                    $.get('{{route('clients-ajax.item.modal')}}/'+item.id, function(data){
+
+                        for (var i=0; i<data.length; i++) {
+                            $('#detalle tbody').append(`
+                                <tr>
+                                    <td style="width: 50px">${i+1}</td>
+                                    <td>Productos</td>
+                                    <td>
+                                        <small><b>${data[i].name}-${data[i].presentation}</b></small>
+                                    </td>
+                                    <td> ${data[i].cant} </td>
+                                    <td>${data[i].price}</td>
+                                    <td class="text-right"><b>${data[i].price * data[i].cant} Bs.</b></td>
+                                    
+                                </tr>
+                            `);
+                        }
+                    });
+                }
+
+
+
+
+                var name='';
+                $.get('{{route('clients-ajax.adition.modal')}}/'+item.id, function(data){
+                    var pago= 0;
+                    
+                    for (var i=0; i<data.length; i++) {
+                        // pago = pago+ data[i].cant;
+                        pago = pago + parseInt(data[i].cant);
+                        // alert(data[i].userRegister_id.name)
+                        // alert 
+                        // $.get('{{route('user-ajax.user')}}/'+data[i].userRegister_id, function(datas)
+                        // {
+                        //     name = 11
+                        //     // alert(name)
+                        // });
+                        
+                        // console.log(data[i])
+                        $('#detallepago tbody').append(`
+                            <tr>
+                                <td style="width: 50px">${i+1}</td>
+                                <td style="width: 50px">${data[i].created_at}</td>
+                                <td style="width: 50px">${data[i].observation? data[i].observation:''}</td>
+                                <td style="width: 50px" class="text-right">${data[i].cant}</td>                               
+                                
+                            </tr>
+                        `);
+                    }
+                    
+                    $('#label-total-payment').text(Number(pago).toString());
+                    $('#label-debt').text(item.amount - pago);
+                });
+
+
+            })
             
     </script>
 @stop

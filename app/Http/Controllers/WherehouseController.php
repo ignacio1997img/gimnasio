@@ -29,6 +29,7 @@ class WherehouseController extends Controller
 
     public function create()
     {
+        // return 1;
         $user = Auth::user();
         $category = Category::where('busine_id', $user->busine_id)->get();
         $provider = Provider::where('busine_id', $user->busine_id)->get();

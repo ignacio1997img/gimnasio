@@ -69,6 +69,11 @@
                                                     <a href="#" title="Ver" class="btn btn-sm btn-default pull-right" onclick="openWindow({{$item->id}})">
                                                         <i class="voyager-file-text"></i> <span class="hidden-xs hidden-sm">Imprimir apertura</span>
                                                     </a>
+                                                    @if ($item->status == "cierre pendiente")
+                                                        <a href="{{route('cashiers.confirm_close',['cashier' => $item->id])}}" title="Ver" class="btn btn-sm btn-danger pull-right">
+                                                            <i class="voyager-lock"></i> <span class="hidden-xs hidden-sm">Confirmar Cierre de Caja</span>
+                                                        </a>
+                                                    @endif
                                                     <div class="no-sort no-click bread-actions text-right">
                                                         @if(auth()->user()->hasPermission('read_income'))
                                                             
