@@ -57,7 +57,7 @@ class VaultController extends Controller
     //para agregar movimiento a la  Boveda
     public function details_store($id, Request $request){
         // dd($request);
-        // return $request;
+        return $request;
         DB::beginTransaction();
         try {
             $detail = VaultsDetail::create([

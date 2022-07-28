@@ -40,7 +40,6 @@
         <div class="row">
             @php
                 $vault = \App\Models\Vault::with(['details.cash'])->where('status', 'activa')->where('deleted_at', NULL)->where('id', $vault->id)->first();
-                // dd($vault);
                 $cash_value = [
                     '200.00' => 0,
                     '100.00' => 0,

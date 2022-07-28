@@ -9,12 +9,12 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body" style="padding: 0px">
-                        <div class="col-md-6" style="padding: 0px">
+                        <div class="col-md-4" style="padding: 0px">
                             <h1 class="page-title">
                                 <i class="voyager-treasure"></i> Bóveda
                             </h1>
                         </div>
-                        <div class="col-md-6 text-right" style="margin-top: 30px">
+                        <div class="col-md-8 text-right" style="margin-top: 30px">
                             @if (auth()->user()->hasPermission('print_vaults'))
                                 <a href="{{ route('vaults.print.status', ['vault' => $vault ? $vault->id : 0]) }}" target="_blank" class="btn btn-default">
                                     <i class="glyphicon glyphicon-print"></i> <span>Imprimir</span>
@@ -24,7 +24,10 @@
                                 @if ($vault->status == 'activa')
                                     @if (auth()->user()->hasPermission('movements_vaults'))
                                         <a href="#" data-toggle="modal" data-target="#vaults-details-modal" class="btn btn-success">
-                                            <i class="voyager-dollar"></i> <span>Agregar movimiento</span>
+                                            <i class="voyager-dollar"></i> <span>Agregar Ingresos</span>
+                                        </a>
+                                        <a href="#" data-toggle="modal" data-target="#vaults-egreso-modal" class="btn btn-primary">
+                                            <i class="voyager-dollar"></i> <span>Agregar Egresos</span>
                                         </a>
                                     @endif                                    
                                     @if (auth()->user()->hasPermission('close_vaults'))
@@ -224,6 +227,101 @@
         </div>
     </form>
 
+    {{--  para egresos --}}
+    @if ($vault)        
+    
+    <form action="{{ route('vaults.details.store', ['id' => $vault ? $vault->id : 0]) }}" method="post">
+        @csrf
+        {{-- <input type="hidden" name="vault_id" value="{{  }}"> --}}
+        <div class="modal fade" tabindex="-1" id="vaults-egreso-modal" role="dialog">
+            <div class="modal-dialog modal-success modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"><i class="voyager-dollar"></i> Movimiento de efectivo a bóveda</h4>
+                    </div>
+                    <div class="modal-body">
+                        @php
+                            $vaults = \App\Models\Vault::with(['details.cash'])->where('status', 'activa')->where('deleted_at', NULL)->where('id', $vault->id)->first();
+                            $cash_values = [
+                                '200.00' => 0,
+                                '100.00' => 0,
+                                '50.00' => 0,
+                                '20.00' => 0,
+                                '10.00' => 0,
+                                '5.00' => 0,
+                                '2.00' => 0,
+                                '1.00' => 0,
+                                '0.50' => 0,
+                                '0.20' => 0,
+                                '0.10' => 0,
+                            ];
+                            if($vaults){
+                                foreach($vaults->details as $detail){
+                                    foreach($detail->cash as $cash){
+                                        if($detail->type == 'ingreso'){
+                                            $cash_values[$cash->cash_value] += $cash->quantity;
+                                        }else{
+                                            $cash_values[$cash->cash_value] -= $cash->quantity;
+                                        }
+                                    }
+                                }
+                            }
+                        @endphp
+                        <div class="row">
+                            <div class="col-md-7" style="margin:0px">
+                                <div class="panel-body" style="padding-top:0;max-height:500px;overflow-y:auto">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Corte</th>
+                                                <th>Cantidad</th>
+                                                <th>Sub Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lista_cortes1"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-5" style="margin:0px">
+                                <h3 class="text-muted">Detalles de movimiento <br> <small style="font-size: 12px">Los campos son opcionales y solo se deben rellenar con fines informativos.</small></h3><br>
+                                <div class="form-group text-center">
+                                    {{-- <label class="radio-inline"><input type="radio" name="type" value="ingreso" checked>Ingreso</label> &nbsp;&nbsp; --}}
+                                    <label class="radio-inline"><input type="radio" name="type" value="egreso" checked>Egreso</label>
+                                </div>
+                                {{-- <div class="form-group">
+                                    <label for="bill_number">N&deg; de cheque</label>
+                                    <input type="text" name="bill_number" class="form-control" placeholder="545645" />
+                                </div> --}}
+                                <div class="form-group">
+                                    <label for="name_sender">Nombre de remitente</label>
+                                    <input type="text" name="name_sender" class="form-control" placeholder="Jhon Doe" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Detalles</label>
+                                    <textarea name="description" class="form-control" rows="4"></textarea>
+                                </div>
+                                <div class="form-group text-right">
+                                    <label class="checkbox-inline"><input type="checkbox" value="1" required>Aceptar y guardar registro de caja</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6" style="margin: 0px"><h4>TOTAL</h4></div>
+                                    <div class="col-md-6">
+                                        <h3 class="text-right text-muted" style="margin: 0px;" id="label-total1">0.00 Bs.</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Registrar ingreso</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    @endif
     {{-- vault open modal --}}
     <form action="{{ route('vaults.open', ['id' => $vault ? $vault->id : 0]) }}" method="post">
         @csrf
@@ -257,9 +355,13 @@
     <script>
         $(document).ready(function() {
             let cortes = new Array('200', '100', '50', '20', '10', '5', '2', '1', '0.5', '0.2', '0.1');
+
+
+            
             cortes.map(function(value){
+                
                 // alert(1)
-                $('#lista_cortes').append(`<tr>
+                            $('#lista_cortes').append(`<tr>
                                 <td><h4><img src="{{ asset('images/cash/${value}.jpg') }}" alt="${value} Bs." width="70px"> ${value} Bs. </h4></td>
                                 <td>
                                     <input type="hidden" name="cash_value[]" value="${value}" required>
@@ -267,7 +369,34 @@
                                 </td>
                                 <td><label id="label-${value.replace('.', '')}">0.00 Bs.</label><input type="hidden" class="input-subtotal" id="input-${value.replace('.', '')}"></td>
                             </tr>`);
+
+
+
+                            
+                            $('#lista_cortes1').append(`<tr>
+                                <td><h4><img src="{{ asset('images/cash/${value}.jpg') }}" alt="${value} Bs." width="70px"> ${value} Bs. </h4></td>
+                                <td>
+                                    <input type="hidden" name="cash_value[]" value="${value}" required>
+                                    <input type="number" name="quantity[]" id="input-cash-${value.replace('.', '-')}" min="0" step="1" style="width:80px" data-value="${value}" class="form-control input-corte1" value="0" required>
+                                </td>
+                                <td><label id="1label-${value.replace('.', '')}">0.00 Bs.</label><input type="hidden" class="input-subtotal1" id="1input-${value.replace('.', '')}"></td>
+                            </tr>`);
+
+                            
             });
+
+            let vault = JSON.parse('@json($cash_values)');
+                            $(`#input-cash-200`).attr('max', vault['200.00']);
+                            $(`#input-cash-100`).attr('max', vault['100.00']);
+                            $(`#input-cash-50`).attr('max', vault['50.00']);
+                            $(`#input-cash-20`).attr('max', vault['20.00']);
+                            $(`#input-cash-10`).attr('max', vault['10.00']);
+                            $(`#input-cash-5`).attr('max', vault['5.00']);
+                            $(`#input-cash-2`).attr('max', vault['2.00']);
+                            $(`#input-cash-1`).attr('max', vault['1.00']);
+                            $(`#input-cash-0-5`).attr('max', vault['0.50']);
+                            $(`#input-cash-0-2`).attr('max', vault['0.20']);
+                            $(`#input-cash-0-1`).attr('max', vault['0.10']);
 
             let columns = [
                 { data: 'id', title: 'id' },
@@ -297,6 +426,23 @@
                 // alert(cantidad)
                 calcular_subtottal(corte, cantidad);
             });
+
+            //para los egresos
+
+            $('.input-corte1').keyup(function(){
+                let corte = $(this).data('value');
+                // alert(corte)
+                let cantidad = $(this).val() ? $(this).val() : 0;
+                // alert(cantidad)
+                calcular_subtottal1(corte, cantidad);
+            });
+            $('.input-corte1').change(function(){
+                let corte = $(this).data('value');
+                // alert(corte)
+                let cantidad = $(this).val() ? $(this).val() : 0;
+                // alert(cantidad)
+                calcular_subtottal1(corte, cantidad);
+            });
         });
 
         function calcular_subtottal(corte, cantidad){
@@ -313,6 +459,26 @@
             });
             console.log(total)
             $('#label-total').html('<b>'+(total).toFixed(2)+' Bs.</b>');
+        }
+
+
+
+        //para los egresos
+
+        function calcular_subtottal1(corte, cantidad){
+            let total = (parseFloat(corte)*parseFloat(cantidad)).toFixed(2);
+            $('#1label-'+corte.toString().replace('.', '')).text(total+' Bs.');
+            $('#1input-'+corte.toString().replace('.', '')).val(total);
+            calcular_total1();
+        }
+
+        function calcular_total1(){
+            let total = 0;
+            $(".input-subtotal1").each(function(){
+                total += $(this).val() ? parseFloat($(this).val()) : 0;
+            });
+            console.log(total)
+            $('#label-total1').html('<b>'+(total).toFixed(2)+' Bs.</b>');
         }
     </script>
 @stop
