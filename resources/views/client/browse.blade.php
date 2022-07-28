@@ -1,6 +1,6 @@
 @extends('voyager::master')
 
-@section('page_title', 'Viendo Datos Personales')
+@section('page_title', 'Viendo Registro de Servicios')
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @section('page_header')
     <div class="container-fluid">

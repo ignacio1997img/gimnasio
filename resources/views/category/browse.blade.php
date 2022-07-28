@@ -1,6 +1,6 @@
 @extends('voyager::master')
 
-@section('page_title', 'Viendo Datos Personales')
+@section('page_title', 'Viendo Categoria de Producto')
 @if (auth()->user()->hasPermission('browse_categories'))
 
 @section('page_header')

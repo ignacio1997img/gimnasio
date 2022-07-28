@@ -1,6 +1,6 @@
 @extends('voyager::master')
 
-@section('page_title', 'Viendo Datos Personales')
+@section('page_title', 'Viendo Proveedor')
 @if (auth()->user()->hasPermission('browse_providers'))
 @section('page_header')
     <div class="container-fluid">
