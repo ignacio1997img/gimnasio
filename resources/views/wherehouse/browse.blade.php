@@ -1,6 +1,7 @@
 @extends('voyager::master')
 
 @section('page_title', 'Viendo Almacen')
+@if (auth()->user()->hasPermission('browse_wherehouses'))
 
 @section('page_header')
     <div class="container-fluid">
@@ -18,10 +19,12 @@
                             </div> --}}
                         </div>
                         <div class="col-md-4 text-right" style="margin-top: 30px">
+                            @if (auth()->user()->hasPermission('add_wherehouses'))
                          
                                 <a href="{{route('wherehouses.create')}}"  class="btn btn-success">
                                     <i class="voyager-plus"></i> <span>Registrar</span>
                                 </a>
+                            @endif
                      
                         </div>
                     </div>
@@ -83,9 +86,11 @@
                                             </td>
                                             <td style="text-align: right"> <small>Bs. {{$item->itemEarnings}}</small> </td>
                                             <td style="text-align: right">
-                                                <button title="Borrar" class="btn btn-sm btn-danger delete" onclick="deleteItem('{{ route('wherehouses.destroy', ['wherehouse' => $item->id]) }}')" data-toggle="modal" data-target="#delete-modal">
-                                                    <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Borrar</span>
-                                                </button>
+                                                @if (auth()->user()->hasPermission('delete_wherehouses'))
+                                                    <button title="Borrar" class="btn btn-sm btn-danger delete" onclick="deleteItem('{{ route('wherehouses.destroy', ['wherehouse' => $item->id]) }}')" data-toggle="modal" data-target="#delete-modal">
+                                                        <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Borrar</span>
+                                                    </button>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -259,3 +264,8 @@ small{font-size: 12px;
             
     </script>
 @stop
+@else
+    @section('content')
+        <h1>No tienes permiso</h1>
+    @stop
+@endif

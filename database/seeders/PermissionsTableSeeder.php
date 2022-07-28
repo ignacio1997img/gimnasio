@@ -110,6 +110,23 @@ class PermissionsTableSeeder extends Seeder
 
 
 
+        //para el almacen
+        $keys = [
+            'browse_wherehouses',
+            'add_wherehouses',
+            'delete_wherehouses',
+            
+        ];
+
+        foreach ($keys as $key) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'table_name' => 'wherehouses',
+            ]);
+        }
+
+
+
         
         
 
