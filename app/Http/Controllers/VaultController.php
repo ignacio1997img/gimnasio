@@ -28,10 +28,7 @@ class VaultController extends Controller
         
         $auxvault=0;
         // return $vault;
-        if($vault)
-        {
-            $auxvault = 1;
-        }
+        
             // return $auxvault;
         $user = Auth::user();
         // return $user;
