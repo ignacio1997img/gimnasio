@@ -264,7 +264,7 @@ class CashierController extends Controller
             return redirect()->route('cashiers.index')->with(['message' => 'Caja cerrada exitosamente.', 'alert-type' => 'success', 'id_cashier_close' => $id]);
         } catch (\Throwable $th) {
             DB::rollback();
-            dd($th);
+            // dd($th);
             return redirect()->route('cashiers.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }

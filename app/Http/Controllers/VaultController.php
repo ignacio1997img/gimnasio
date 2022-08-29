@@ -25,11 +25,18 @@ class VaultController extends Controller
                     $q->where('deleted_at', NULL);
                 }])
             ->where('deleted_at', NULL)->where('busine_id', $busine->busine_id)->first();
-            // return 1;
+        
+        $auxvault=0;
+        // return $vault;
+        if($vault)
+        {
+            $auxvault = 1;
+        }
+            // return $auxvault;
         $user = Auth::user();
         // return $user;
         // return $vault;
-        return view('vault.browse', compact('vault', 'user'));
+        return view('vault.browse', compact('vault', 'user', 'auxvault'));
     }
 
 
@@ -57,7 +64,7 @@ class VaultController extends Controller
     //para agregar movimiento a la  Boveda
     public function details_store($id, Request $request){
         // dd($request);
-        return $request;
+        // return $request;
         DB::beginTransaction();
         try {
             $detail = VaultsDetail::create([
@@ -85,7 +92,7 @@ class VaultController extends Controller
             return redirect()->route('vaults.index')->with(['message' => 'Detalle de bóveda guardado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
             DB::rollback();
-            dd($th);
+            // dd($th);
             return redirect()->route('vaults.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }

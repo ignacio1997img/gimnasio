@@ -15,7 +15,7 @@
                             </h1>
                         </div>
                         <div class="col-md-8 text-right" style="margin-top: 30px">
-                            @if (auth()->user()->hasPermission('print_vaults'))
+                            @if (auth()->user()->hasPermission('print_vaults') && $vault)
                                 <a href="{{ route('vaults.print.status', ['vault' => $vault ? $vault->id : 0]) }}" target="_blank" class="btn btn-default">
                                     <i class="glyphicon glyphicon-print"></i> <span>Imprimir</span>
                                 </a>
@@ -321,7 +321,25 @@
             </div>
         </div>
     </form>
+    @else
+        @php
+            $cash_values = [
+                                    '200.00' => 0,
+                                    '100.00' => 0,
+                                    '50.00' => 0,
+                                    '20.00' => 0,
+                                    '10.00' => 0,
+                                    '5.00' => 0,
+                                    '2.00' => 0,
+                                    '1.00' => 0,
+                                    '0.50' => 0,
+                                    '0.20' => 0,
+                                    '0.10' => 0,
+                                ];
+        @endphp
+    
     @endif
+
     {{-- vault open modal --}}
     <form action="{{ route('vaults.open', ['id' => $vault ? $vault->id : 0]) }}" method="post">
         @csrf
@@ -384,8 +402,8 @@
 
                             
             });
-
-            let vault = JSON.parse('@json($cash_values)');
+          
+                let vault = JSON.parse('@json($cash_values)');
                             $(`#input-cash-200`).attr('max', vault['200.00']);
                             $(`#input-cash-100`).attr('max', vault['100.00']);
                             $(`#input-cash-50`).attr('max', vault['50.00']);
@@ -397,6 +415,7 @@
                             $(`#input-cash-0-5`).attr('max', vault['0.50']);
                             $(`#input-cash-0-2`).attr('max', vault['0.20']);
                             $(`#input-cash-0-1`).attr('max', vault['0.10']);
+        
 
             let columns = [
                 { data: 'id', title: 'id' },

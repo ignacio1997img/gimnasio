@@ -1,6 +1,6 @@
 @extends('voyager::master')
 
-@section('page_title', 'Viendo Almacen')
+@section('page_title', 'Viendo Gimnasio')
 @if (auth()->user()->hasPermission('browse_wherehouses'))
 
 @section('page_header')
