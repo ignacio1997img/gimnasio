@@ -18,6 +18,12 @@ class VaultController extends Controller
 {
     public function index()    
     {
+        if(auth()->user()->hasRole('admin'))
+        {
+            return redirect()->route('login')->with(['message' => 'Ocurrió un error, Administrador del sistema no puede crear vobeda.', 'alert-type' => 'error']);
+        }
+
+
         $busine = Auth::user();
         $vault = Vault::with(['details.cash' => function($q){
                     $q->where('deleted_at', NULL);
