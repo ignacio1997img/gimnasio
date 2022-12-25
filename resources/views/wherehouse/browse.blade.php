@@ -70,8 +70,8 @@
                                                     @php
                                                         $image = asset('images/default.jpg');
                                                         if($item->article->image){
-                                                            dd($item->article->image);
-                                                            $image = asset('storage/'.str_replace('.', '_cropped.', $item->image));
+                                                            // dd($item->article->image);
+                                                            $image = asset('storage/'.str_replace('.', '_cropped.', $item->article->image));
                                                         }
 
                                                         // $image = asset('images/default.jpg');
