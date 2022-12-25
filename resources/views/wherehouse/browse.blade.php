@@ -83,11 +83,12 @@
                                                     @endphp
 
 
-                                                            <img src="{{ $image }}" alt="{{$item->article->name}}" style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px">
+                                                            <img src="{{ $image }}" style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px">
                                             
                                                             {{$item->article->name}}
                                                 </table>
                                             </td>
+
 
                                             
                                             <td style="text-align: right">{{$item->amount}}</td>
