@@ -65,7 +65,7 @@
                                     @foreach ($detail as $item)
                                         <tr>
                                             <td style="text-align: center">{{$item->id}}</td>
-                                            <td style="text-align: center">
+                                            <td>
                                                 <table>
                                                     @php
                                                         $image = asset('images/default.jpg');
@@ -88,6 +88,8 @@
                                                             {{$item->article->name}}
                                                 </table>
                                             </td>
+
+                                            
                                             <td style="text-align: right">{{$item->amount}}</td>
                                             <td style="text-align: right">{{$item->items}}</td>
                                             <td style="text-align: right">{{$item->unitPrice}}</td>
