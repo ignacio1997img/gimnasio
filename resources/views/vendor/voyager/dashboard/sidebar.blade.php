@@ -3,6 +3,9 @@
         <div class="side-menu-container">
             <div class="navbar-header">
                 <a class="navbar-brand" href="{{ route('voyager.profile') }}">
+                    @php
+                        $busine=null;
+                    @endphp
                     <div class="logo-icon-container">
                         <?php $admin_logo_img = Voyager::setting('admin.icon_image', ''); ?>
                         @if($admin_logo_img == '')
@@ -25,7 +28,7 @@
                             <img src="{{ Voyager::image($admin_logo_img) }}" alt="Logo Icon">
                         @endif
                     </div>
-                    <div class="title">{{Voyager::setting('admin.title', 'VOYAGER')}}</div>
+                    <div class="title">{{$busine?$busine->name : Voyager::setting('admin.title', 'VOYAGER')}}</div>
                 </a>
             </div><!-- .navbar-header -->
 
