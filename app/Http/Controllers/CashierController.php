@@ -46,6 +46,12 @@ class CashierController extends Controller
         $cashier = Cashier::where('user_id', $request->user_id)->where('status', '!=', 'cerrada')->where('deleted_at', NULL)->first();
 
         if(!$cashier){
+            // return $request;
+            if($request->amount == null || $request->amount==0)
+            {
+                return redirect()->route('cashiers.create')->with(['message' => 'Sin monto asignado a la caja.', 'alert-type' => 'warning']);
+            }
+            // return 1;
             DB::beginTransaction();
             try {
                 $cashier = Cashier::create([
