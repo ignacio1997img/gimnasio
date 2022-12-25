@@ -69,8 +69,8 @@
                                                 <table>
                                                     @php
                                                         $image = asset('images/default.jpg');
-                                                        if($item->image){
-                                                            dd($item->image);
+                                                        if($item->article->image){
+                                                            // dd($item->image);
                                                             $image = asset('storage/'.str_replace('.', '_cropped.', $item->image));
                                                         }
 

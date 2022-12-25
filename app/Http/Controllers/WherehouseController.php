@@ -18,7 +18,7 @@ class WherehouseController extends Controller
     {
         $user = Auth::user();
 
-        $detail = WherehouseDetail::with(['wherehouse' => function($q)use($user){
+        $detail = WherehouseDetail::with(['article','wherehouse' => function($q)use($user){
                     $q->where('busine_id', $user->busine_id);
                 }])
                 ->where('deleted_at', null)
