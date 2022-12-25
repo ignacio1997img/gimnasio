@@ -70,15 +70,16 @@
                                                     @php
                                                         $image = asset('images/default.jpg');
                                                         if($item->image){
+                                                            dd($item->image);
                                                             $image = asset('storage/'.str_replace('.', '_cropped.', $item->image));
                                                         }
 
                                                         // $image = asset('images/default.jpg');
 
-                                                        if($item->image){
-                                                            $image = asset('storage/'.$item->image);
+                                                        // if($item->image){
+                                                        //     $image = asset('storage/'.$item->image);
 
-                                                        }
+                                                        // }
                                                     @endphp
 
 
