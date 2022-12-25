@@ -84,6 +84,7 @@
 
 
                                                             <img src="{{ $image }}" style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px">
+                                                            <br>
                                             
                                                             {{$item->article->name}}
                                                 </table>
