@@ -54,6 +54,9 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('people/ajax/list/{search?}', [PeopleController::class, 'list']);
     Route::post('people/store', [PeopleController::class, 'store'])->name(('people.store'));
 
+    Route::get('people/list/ajax', [PeopleController::class, 'lists']);
+
+
     Route::get('busines',[BusineController::class, 'index'])->name('voyager.busines.index');
     Route::get('busines/user/{id}',[BusineController::class, 'indexUser'])->name('busines-user.index');
     Route::post('busines/user/store',[BusineController::class, 'storeUser'])->name('busines-user.store');

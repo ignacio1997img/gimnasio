@@ -52,5 +52,19 @@ class PeopleController extends Controller
         }
     }
 
+    public function lists(){
+        $q = request('q');
+        // $data = Customer::with(['sales' => function($query){
+        //                 $query->where('status', '=', 'Pendiente');
+        //             }])
+        //             ->whereRaw($q ? '(full_name like "%'.$q.'%" or dni like "%'.$q.'%" or phone like "%'.$q.'%")' : 1)
+        //             ->where('deleted_at', NULL)->where('id', '>', 1)->get();
+
+        $data = People::whereRaw($q ? '(first_name like "%'.$q.'%" or ci like "%'.$q.'%" or last_name like "%'.$q.'%")' : 1)
+        ->where('deleted_at', NULL)->get();
+
+        return response()->json($data);
+    }
+
    
 }

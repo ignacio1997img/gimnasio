@@ -1,7 +1,7 @@
 @extends('voyager::master')
 
 @section('page_title', 'Viendo Registro de Servicios')
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 @section('page_header')
     <div class="container-fluid">
         <div class="row">
@@ -39,7 +39,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-bordered">
-                    <div class="panel-body">                        
+                    <div class="panel-body">   
                         <div class="table-responsive">
                             <table id="dataTable" class="table table-hover">
                                 <thead>
@@ -301,7 +301,7 @@
     <form id="form-search" action="{{ route('clients.store') }}" method="post">
         @csrf
         <input type="hidden" name="cashier_id" value="{{ $cashier? $cashier->id:'' }}">
-        <div class="modal fade" tabindex="-1" id="registar_modal" role="dialog">
+        <div class="modal fade" id="registar_modal" role="dialog">
             <div class="modal-dialog modal-success modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -360,12 +360,8 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <small>Cliente.</small>
-                                    <select name="people_id" class="form-control select2" required>
-                                        <option value="">Seleccione una persona</option>
-                                        @foreach ($people as $item)
-                                            <option value="{{$item->id}}">{{$item->first_name}} {{$item->last_name}}</option>
-                                        @endforeach
-                                    </select>
+                                    <select name="people_id" id="select_people" class="form-control"></select>
+                                    
                                 </div>
                             </div>   
                             <div class="col-sm-3">
@@ -374,8 +370,7 @@
                                     <input type="number" class="form-control" placeholder="Monto Total a Pagar" min="0" step="0.1" name="amount">
                                 </div>
                             </div>                    
-                        </div>
-                        
+                        </div>                 
                         
 
 
@@ -784,16 +779,21 @@
 @stop
 
 @section('css')
-<style>
-small{font-size: 14px;
-        color: rgb(44, 44, 44);
-        font-weight: bold;
-    }
-</style>
-
+    <style>
+        small{font-size: 14px;
+            color: rgb(44, 44, 44);
+            font-weight: bold;
+        }
+        .select2{
+            width: 100% !important;
+        }
+    </style>
 @stop
 
 @section('javascript')
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- <script src="{{ asset('vendor/tippy/popper.min.js') }}"></script>
+    <script src="{{ asset('vendor/tippy/tippy-bundle.umd.min.js') }}"></script> --}}
     <script>
 
         $(function()
@@ -865,14 +865,60 @@ small{font-size: 14px;
                 });
 
 
+            var productSelected, customerSelected;
 
-                $('#form-create-customer').submit(function(e){
+            $('#select_people').select2({
+                // tags: true,
+                placeholder: '<i class="fa fa-search"></i> Buscar...',
+                escapeMarkup : function(markup) {
+                    return markup;
+                },
+                language: {
+                    inputTooShort: function (data) {
+                        return `Por favor ingrese ${data.minimum - data.input.length} o más caracteres`;
+                    },
+                    noResults: function () {
+                        return `<i class="far fa-frown"></i> No hay resultados encontrados`;
+                    }
+                },
+                quietMillis: 250,
+                minimumInputLength: 2,
+                ajax: {
+                    url: "{{ url('admin/people/list/ajax') }}",        
+                    processResults: function (data) {
+                        let results = [];
+                        data.map(data =>{
+                            results.push({
+                                ...data,
+                                disabled: false
+                            });
+                        });
+                        return {
+                            results
+                        };
+                    },
+                    cache: true
+                },
+                templateResult: formatResultCustomers,
+                templateSelection: (opt) => {
+                    customerSelected = opt;
+                    
+                    return opt.first_name?opt.first_name+' '+opt.last_name:'<i class="fa fa-search"></i> Buscar... ';
+                }
+            });
+
+
+            
+
+
+
+            $('#form-create-customer').submit(function(e){
                 e.preventDefault();
                 $('.btn-save-customer').attr('disabled', true);
                 $('.btn-save-customer').val('Guardando...');
                 $.post($(this).attr('action'), $(this).serialize(), function(data){
                     if(data.people.id){
-                        toastr.success('Persona registrada..', 'Éxito');
+                        toastr.success('Persona registrada..', 'Éxitos');
                         $(this).trigger('reset');
                     }else{
                         toastr.error(data.error, 'Error');
@@ -895,8 +941,27 @@ small{font-size: 14px;
                 });
             });
 
+
          
         });
+
+
+
+        function formatResultCustomers(option){
+            // Si está cargando mostrar texto de carga
+            if (option.loading) {
+                return '<span class="text-center"><i class="fas fa-spinner fa-spin"></i> Buscando...</span>';
+            }
+            // Mostrar las opciones encontradas
+            return $(`  <div>
+                            <b style="font-size: 16px">${option.first_name} ${option.last_name}</b><br>
+                            <spam>NIT/CI: ${option.ci ? option.ci : 'No definido'} - Cel: ${option.phone ? option.phone : 'No definido'}</spam>
+                        </div>`);
+        }
+
+
+
+
         var arrayarticle = [];
         var total=0;
 
@@ -1311,15 +1376,6 @@ small{font-size: 14px;
                     for (var i=0; i<data.length; i++) {
                         // pago = pago+ data[i].cant;
                         pago = pago + parseInt(data[i].cant);
-                        // alert(data[i].userRegister_id.name)
-                        // alert 
-                        // $.get('{{route('user-ajax.user')}}/'+data[i].userRegister_id, function(datas)
-                        // {
-                        //     name = 11
-                        //     // alert(name)
-                        // });
-                        
-                        // console.log(data[i])
                         $('#detallepago tbody').append(`
                             <tr>
                                 <td style="width: 50px">${i+1}</td>
