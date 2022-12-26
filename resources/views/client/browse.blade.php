@@ -197,7 +197,7 @@
     <form id="form-search" action="{{ route('clients-article.store') }}" method="post">
         @csrf
         <input type="hidden" name="cashier_id" value="{{ $cashier? $cashier->id:'' }}">
-        <div class="modal fade" tabindex="-1" id="producto_modal" role="dialog">
+        <div class="modal fade" id="producto_modal" role="dialog">
             <div class="modal-dialog modal-primary modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -212,7 +212,7 @@
                     @endif
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-sm-6">
+                            {{-- <div class="col-sm-6">
                                 <div class="form-group">
                                     <small>Cliente.</small>
                                     <select name="people_id" class="form-control select2">
@@ -222,7 +222,15 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div> 
+                            </div>  --}}
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <small>Cliente.</small>
+                                    <select name="people_id" id="select_people" class="form-control"></select>
+                                    
+                                </div>
+                            </div>  
                             
                             <div class="col-sm-4">
                                 <div class="form-group">
@@ -360,7 +368,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <small>Cliente.</small>
-                                    <select name="people_id" id="select_people" class="form-control"></select>
+                                    <select name="people_id" id="select_people1" class="form-control"></select>
                                     
                                 </div>
                             </div>   
@@ -392,7 +400,7 @@
                             <div class="col-sm-3"id="text" style="display:none">
                                 <div class="form-group">
                                     <small>Monto Recibido.</small>
-                                    <input type="number" name="subAmount" id="input-subAmount" min="0" step="0.1" class="form-control" placeholder="Monto recibo Bs.">
+                                    <input type="number" name="subAmount" id="input-subAmount" min="0" step="0.1" class="form-control" value="0" placeholder="Monto recibo Bs.">
 
                                 </div>
                             </div>                               
@@ -906,6 +914,46 @@
                     return opt.first_name?opt.first_name+' '+opt.last_name:'<i class="fa fa-search"></i> Buscar... ';
                 }
             });
+            $('#select_people1').select2({
+                // tags: true,
+                placeholder: '<i class="fa fa-search"></i> Buscar...',
+                escapeMarkup : function(markup) {
+                    return markup;
+                },
+                language: {
+                    inputTooShort: function (data) {
+                        return `Por favor ingrese ${data.minimum - data.input.length} o más caracteres`;
+                    },
+                    noResults: function () {
+                        return `<i class="far fa-frown"></i> No hay resultados encontrados`;
+                    }
+                },
+                quietMillis: 250,
+                minimumInputLength: 2,
+                ajax: {
+                    url: "{{ url('admin/people/list/ajax') }}",        
+                    processResults: function (data) {
+                        let results = [];
+                        data.map(data =>{
+                            results.push({
+                                ...data,
+                                disabled: false
+                            });
+                        });
+                        return {
+                            results
+                        };
+                    },
+                    cache: true
+                },
+                templateResult: formatResultCustomers,
+                templateSelection: (opt) => {
+                    customerSelected = opt;
+                    
+                    return opt.first_name?opt.first_name+' '+opt.last_name:'<i class="fa fa-search"></i> Buscar... ';
+                }
+            });
+
 
 
             

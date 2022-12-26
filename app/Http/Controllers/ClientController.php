@@ -67,7 +67,16 @@ class ClientController extends Controller
 
     public function store(Request $request)
     {   
+        if($request->subAmount == NULL)
+        {
+            $request->merge(['subAmount'=>0]);
+        }
+        if($request->subAmount > $request->amount)
+        {
+            return redirect()->route('clients.index')->with(['message' => 'El cuota no debe ser mayor al monto total.', 'alert-type' => 'warning']);
+        }
         // return $request;
+
         DB::beginTransaction();
         try {
             $user = Auth::user()->id;
