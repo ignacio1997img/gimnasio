@@ -1,7 +1,8 @@
 @extends('voyager::master')
 
-@section('page_title', 'Viendo Datos Personales')
+@section('page_title', 'Viendo usuarios')
 
+@if (auth()->user()->hasPermission('user_busines'))
 @section('page_header')
     <div class="container-fluid">
         <div class="row">
@@ -56,7 +57,11 @@
                                     @forelse ($user as $item)
                                         <tr>
                                             <td>{{$item->id}}</td>
-                                            <td style="text-align: center">{{$item->name}}</td>
+                                            <td style="text-align: center">
+                                                <small>Nombre: </small>{{$item->name}} <br>
+                                                <small>CI: </small>{{$item->ci}}
+
+                                            </td>
                                             <td style="text-align: center">{{$item->email}}</td>
 
                                             <td style="text-align: center">
@@ -134,6 +139,14 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
+                                    <small>CI.</small>
+                                    <input type="text" name="ci" class="form-control" required>
+                                </div>
+                            </div>                             
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
                                     <small>Nombre.</small>
                                     <input type="text" name="name" class="form-control" required>
                                 </div>
@@ -158,7 +171,7 @@
                                     <select name="role_id" class="form-control select2" required>
                                         <option value="">Seleccione un rol</option>
                                         @foreach ($role as $item)
-                                                <option value="{{$item->id}}">{{$item->name}}</option>
+                                                <option value="{{$item->id}}">{{$item->display_name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -188,6 +201,14 @@
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="id" id="id">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <small>CI.</small>
+                                        <input type="text" name="ci" id="ci" class="form-control" required>
+                                    </div>
+                                </div>                             
+                            </div>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -227,11 +248,11 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>
-                                            <input type="radio" name="status" value="1" checked/>
+                                            <input type="radio" name="status" id="si" value="1"/>
                                             <span> Activo</span>
                                         </label>
                                         <label>
-                                            <input type="radio" name="status" value="0"/>
+                                            <input type="radio" name="status" id="no" value="0"/>
                                             <span> Inactivo</span>
                                         </label>
                                     </div>
@@ -271,74 +292,6 @@ body {
 	background-color: mix(#fff, $primary-color, 90%);
 }
 
-form {
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: column;
-}
-
-label {
-	display: flex;
-	cursor: pointer;
-	font-weight: 500;
-	position: relative;
-	overflow: hidden;
-	margin-bottom: 0.375em;
-	/* Accessible outline */
-	/* Remove comment to use */ 
-	/*
-		&:focus-within {
-				outline: .125em solid $primary-color;
-		}
-	*/
-	input {
-		position: absolute;
-		left: -9999px;
-		&:checked + span {
-			background-color: mix(#fff, $primary-color, 84%);
-			&:before {
-				box-shadow: inset 0 0 0 0.4375em $primary-color;
-			}
-		}
-	}
-	span {
-		display: flex;
-		align-items: center;
-		padding: 0.375em 0.75em 0.375em 0.375em;
-		border-radius: 99em; // or something higher...
-		transition: 0.25s ease;
-		&:hover {
-			background-color: mix(#fff, $primary-color, 84%);
-		}
-		&:before {
-			display: flex;
-			flex-shrink: 0;
-			content: "";
-			background-color: #fff;
-			width: 1.5em;
-			height: 1.5em;
-			border-radius: 50%;
-			margin-right: 0.375em;
-			transition: 0.25s ease;
-			box-shadow: inset 0 0 0 0.125em $primary-color;
-		}
-	}
-}
-
-// Codepen spesific styling - only to center the elements in the pen preview and viewport
-.container {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding: 20px;
-}
-// End Codepen spesific styling
 
 
 </style>
@@ -412,9 +365,24 @@ label {
 
                 var modal = $(this)
                 modal.find('.modal-body #id').val(item.id)
+                modal.find('.modal-body #ci').val(item.ci)
                 modal.find('.modal-body #name').val(item.name)
                 modal.find('.modal-body #email').val(item.email)
-                modal.find('.modal-body #role_id').val(item.role_id).trigger('change')                
+                modal.find('.modal-body #role_id').val(item.role_id).trigger('change')      
+                
+                if(item.status==1)
+                {
+                    $("#si").prop('checked', true);
+                    // document.querySelector('#si').checked;
+                    // modal.find('.modal-body #si').checked = true;
+
+                }
+                else
+                {
+                    $("#no").prop('checked', true);
+                    // document.querySelector('#no').checked = true;
+                }
             });
     </script>
 @stop
+@endif

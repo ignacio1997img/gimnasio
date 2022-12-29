@@ -46,7 +46,21 @@ class PermissionsTableSeeder extends Seeder
 
 
         Permission::generateFor('people');
-        Permission::generateFor('busines');
+        // Permission::generateFor('busines');
+        $keys = [
+            'browse_busines',
+            'add_busines',
+            'edit_busines',
+            'read_busines',
+            'user_busines'            
+        ];
+
+        foreach ($keys as $key) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'table_name' => 'busines',
+            ]);
+        }
 
         Permission::generateFor('plans');
         Permission::generateFor('days');

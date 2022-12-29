@@ -1,6 +1,7 @@
 @extends('voyager::master')
 
-@section('page_title', 'Viendo Datos Personales')
+@section('page_title', 'Viendo Gym')
+@if (auth()->user()->hasPermission('browse_busines'))
 
 @section('page_header')
     <div class="container-fluid">
@@ -18,11 +19,11 @@
                             </div> --}}
                         </div>
                         <div class="col-md-4 text-right" style="margin-top: 30px">
-                            {{-- @if (auth()->user()->hasPermission('add_people')) --}}
+                            @if (auth()->user()->hasRole('admin'))
                                 <a href="{{ route('voyager.busines.create') }}" class="btn btn-success">
                                     <i class="voyager-plus"></i> <span>Crear</span>
                                 </a>
-                            {{-- @endif --}}
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -88,9 +89,11 @@
                                                 @endif
                                             </td>
                                             <td class="no-sort no-click bread-actions text-right">
+                                                @if (auth()->user()->hasPermission('user_busines'))
                                                     <a href="{{ route('busines-user.index', ['id' => $item->id]) }}" title="user" class="btn btn-sm btn-success view">
                                                         <i class="fa-solid fa-users"></i> <span class="hidden-xs hidden-sm">User</span>
                                                     </a>
+                                                @endif
                                                 @if (auth()->user()->hasPermission('read_busines'))
                                                     <a href="{{ route('voyager.busines.show', ['id' => $item->id]) }}" title="Ver" class="btn btn-sm btn-warning view">
                                                         <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Ver</span>
@@ -260,3 +263,4 @@
         // @endif
     </script>
 @stop
+@endif

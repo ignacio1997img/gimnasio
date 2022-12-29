@@ -24,7 +24,9 @@ class User extends \TCG\Voyager\Models\User
         'role_id',
         'avatar',
         'busine_id',
-        'status'
+        'status',
+        'ci',
+        'registerUser_id'
     ];
 
     public function busine()

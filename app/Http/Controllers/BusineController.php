@@ -7,6 +7,7 @@ use TCG\Voyager\Models\Role;
 use Illuminate\Support\Facades\DB;
 use App\Models\Busine;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class BusineController extends Controller
 {
@@ -33,11 +34,13 @@ class BusineController extends Controller
         DB::beginTransaction();
         try {
             User::create([
+                'ci' => $request->ci,
                 'name' => $request->name,
                 'email' => $request->email,
                 'role_id' => $request->role_id,
                 'busine_id' => $request->busine_id,
-                'password' => bcrypt($request->password)
+                'password' => bcrypt($request->password),
+                'registerUser_id' => Auth::user()->id
             ]);
             DB::commit();
             return redirect()->route('busines-user.index', $request->busine_id)->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success']);
@@ -56,7 +59,7 @@ class BusineController extends Controller
         DB::beginTransaction();
         try {
             $user = User::find($request->id);
-            $user->update(['name' => $request->name, 'email'=>$request->email,
+            $user->update(['ci'=>$request->ci,'name' => $request->name, 'email'=>$request->email,
                             'role_id'=>$request->role_id, 'status'=>$request->status
             ]);
             if($request->password)
