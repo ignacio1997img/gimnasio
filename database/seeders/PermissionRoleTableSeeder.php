@@ -38,7 +38,7 @@ class PermissionRoleTableSeeder extends Seeder
                                             table_name = "clients" or
 
                                             `key` = "browse_busines" or
-                                            `key` = "editar_busines" or 
+                                            `key` = "edit_busines" or 
                                             `key` = "read_busines" or 
                                             `key` = "user_busines" or 
 
