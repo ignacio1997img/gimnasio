@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class gh extends Seeder
+class UpdatePermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
