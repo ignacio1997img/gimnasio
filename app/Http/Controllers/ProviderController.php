@@ -45,7 +45,12 @@ class ProviderController extends Controller
             $user = Auth::user();
             // $request->merge(['busine_id'=>$user->busine_id]);
             // $request->merge(['userRegister_id'=>$user->id]);
-            $imagen = $this->agregar_imagenes($request->file('image'));
+            $imagen=null;
+            if($request->file('image'))
+            {
+                $imagen = $this->agregar_imagenes($request->file('image'));
+            }
+
             // return "hola";
             Provider::create([
                 'busine_id' => $user->busine_id,

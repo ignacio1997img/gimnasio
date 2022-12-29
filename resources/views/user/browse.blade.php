@@ -373,14 +373,11 @@ body {
                 if(item.status==1)
                 {
                     $("#si").prop('checked', true);
-                    // document.querySelector('#si').checked;
-                    // modal.find('.modal-body #si').checked = true;
 
                 }
                 else
                 {
                     $("#no").prop('checked', true);
-                    // document.querySelector('#no').checked = true;
                 }
             });
     </script>

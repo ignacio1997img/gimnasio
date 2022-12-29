@@ -67,6 +67,7 @@ class ClientController extends Controller
 
     public function store(Request $request)
     {   
+        // return $request;
         if($request->subAmount == NULL)
         {
             $request->merge(['subAmount'=>0]);
@@ -159,11 +160,24 @@ class ClientController extends Controller
     public function articleStore(Request $request)
     {
         // return $request;
+
+        if(!$request->total_pagar)
+        {
+            // return 1;
+            return redirect()->route('clients.index')->with(['message' => 'Introdusca algun producto o articulo.', 'alert-type' => 'warning']);
+        }
+
+
         if($request->subAmount == NULL)
         {
             $request->merge(['subAmount'=>0]);
         }
-        if($request->subAmount > $request->amount)
+        $amount =0;
+        for ($i=0; $i < count($request->total_pagar); $i++) { 
+            $amount+= $request->total_pagar[$i];
+        }
+
+        if($request->subAmount > $amount)
         {
             return redirect()->route('clients.index')->with(['message' => 'El cuota no debe ser mayor al monto total.', 'alert-type' => 'warning']);
         }
