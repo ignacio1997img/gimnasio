@@ -10,7 +10,7 @@ class Adition extends Model
     use HasFactory;
 
     protected $fillable = [
-        'client_id', 'cant', 'status', 'deleted_at', 'cashier_id', 'observation', 'type', 'userRegister_id'
+        'client_id', 'cant', 'status', 'deleted_at', 'cashier_id', 'observation', 'type', 'userRegister_id',  'userDelete_id'
     ];
     
     public function user()

@@ -91,9 +91,11 @@ Route::group(['prefix' => 'admin'], function () {
     // Route::get('planillas/pagos/delete/print/{id}', [CashierController::class, 'planillas_pagos_delete_print']);//procesoo
 
 
+    Route::get('loans/ajax/list/{cashier_id}/{type}/{search?}', [LoanController::class, 'list']);
 
 
     Route::resource('clients', ClientController::class);
+    Route::get('clients/ajax/list/{type}/{search?}', [ClientController::class, 'list']);
     Route::post('clients/adition/store', [ClientController::class, 'aditionStore'])->name('clients-adition.store');
     Route::post('clients/update', [ClientController::class, 'update'])->name('clients.update');
     Route::post('clients/article', [ClientController::class, 'articleStore'])->name('clients-article.store');
@@ -107,7 +109,8 @@ Route::group(['prefix' => 'admin'], function () {
 
 
 
-    Route::resource('client', ClientController::class);
+    Route::resource('client', ClientController::class);//en observacion
+    
 
     Route::resource('instructor', InstructorController::class);
 

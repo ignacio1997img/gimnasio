@@ -26,11 +26,11 @@ class ClientController extends Controller
         $day = Day::all();
         $service = Service::all();
         $plan = Plan::all();
+
         $user = Auth::user();
-        $query_filter= 'id = '.$user->busine_id;
+        $query_filter= 'busine_id = '.$user->busine_id;
         if (Auth::user()->hasRole('admin'))
         {
-            // return 1;
             $query_filter =1;
         }
         $people = People::where('deleted_at', null)->where('status', 1)->where('busine_id', $user->busine_id)->get();
@@ -46,28 +46,155 @@ class ClientController extends Controller
             ->select('a.name', 'a.presentation', 'wd.id', 'wd.itemEarnings', DB::raw("SUM(wd.item) as cant"))
             ->groupBy('wd.article_id', 'wd.itemEarnings')->get();
 
-        // return $article;
         
+
         $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
         // return $cashier;
-        
-        $client = Client::whereHas('cashier.vault.busine', function($q)use($query_filter){
-            $q->whereRaw($query_filter);
-        })
-        ->where('deleted_at', null)->get();
 
-        // $client = Client::whereHas('cashier.vault.busine', function($q)use($user){
-        //     $q->where('id', $user->busine_id);
-        // })
-        // ->where('deleted_at', null)->get();
+
+        $client = Client::with(['service', 'plan', 'item.wherehouseDetail.article'])
+                ->where('deleted_at', null)
+                ->whereRaw($query_filter)
+                ->get();
+
+        // return $client;
+        
+        
+
 
      
         return view('client.browse', compact('day', 'service', 'plan', 'people', 'cashier', 'client', 'article', 'category'));
     }
 
+    public function list($type, $search = null)
+    {
+        // return $type;
+
+        $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
+
+        $user = Auth::user();
+        $query_filter= 'busine_id = '.$user->busine_id;
+        if (Auth::user()->hasRole('admin'))
+        {
+            $query_filter =1;
+        }
+        $paginate = request('paginate') ?? 10;
+
+        switch($type)
+        {
+            case 'todo':
+                $data = Client::with(['people', 'service', 'plan', 'item.wherehouseDetail.article'])
+                ->where(function($query) use ($search){
+                    if($search){
+                        $query->OrwhereHas('people', function($query) use($search){
+                            $query->whereRaw("(first_name like '%$search%' or last_name like '%$search%' or ci like '%$search%' or CONCAT(first_name, ' ', last_name) like '%$search%')");
+                        });
+                    }
+                })
+                ->where('deleted_at', null)
+                ->whereRaw($query_filter)
+                ->orderBy('id', 'DESC')->paginate($paginate);
+                break;
+            case 'enpago':
+                $data = Client::with(['service', 'plan', 'item.wherehouseDetail.article'])
+                ->where(function($query) use ($search){
+                    if($search){
+                        $query->OrwhereHas('people', function($query) use($search){
+                            $query->whereRaw("(first_name like '%$search%' or last_name like '%$search%' or ci like '%$search%' or CONCAT(first_name, ' ', last_name) like '%$search%')");
+                        });
+                    }
+                })
+                ->where('deleted_at', null)
+                ->whereRaw('subAmount != amount')
+                ->whereRaw($query_filter)
+                ->orderBy('id', 'DESC')->paginate($paginate);
+                break;
+            case 'enpagoS':
+                $data = Client::with(['service', 'plan', 'item.wherehouseDetail.article'])
+                ->where(function($query) use ($search){
+                    if($search){
+                        $query->OrwhereHas('people', function($query) use($search){
+                            $query->whereRaw("(first_name like '%$search%' or last_name like '%$search%' or ci like '%$search%' or CONCAT(first_name, ' ', last_name) like '%$search%')");
+                        });
+                    }
+                })
+                ->whereNotNull('service_id')
+                ->whereNotNull('plan_id')
+                ->where('deleted_at', null)
+                ->whereRaw('subAmount != amount')
+                ->whereRaw($query_filter)
+                ->orderBy('id', 'DESC')->paginate($paginate);
+                break;
+            case 'enpagoP':
+                $data = Client::with(['service', 'plan', 'item.wherehouseDetail.article'])
+                ->where(function($query) use ($search){
+                    if($search){
+                        $query->OrwhereHas('people', function($query) use($search){
+                            $query->whereRaw("(first_name like '%$search%' or last_name like '%$search%' or ci like '%$search%' or CONCAT(first_name, ' ', last_name) like '%$search%')");
+                        });
+                    }
+                })
+                ->where('deleted_at', null)
+                ->where('service_id', null)
+                ->where('plan_id', null)
+                ->whereRaw('subAmount != amount')
+                ->whereRaw($query_filter)
+                ->orderBy('id', 'DESC')->paginate($paginate);
+                break;
+            case 'pagado':
+                $data = Client::with(['service', 'plan', 'item.wherehouseDetail.article'])
+                ->where(function($query) use ($search){
+                    if($search){
+                        $query->OrwhereHas('people', function($query) use($search){
+                            $query->whereRaw("(first_name like '%$search%' or last_name like '%$search%' or ci like '%$search%' or CONCAT(first_name, ' ', last_name) like '%$search%')");
+                        });
+                    }
+                })
+                ->where('deleted_at', null)
+                ->whereRaw('subAmount = amount')
+                ->whereRaw($query_filter)
+                ->orderBy('id', 'DESC')->paginate($paginate);
+                break;
+                
+            case 'eliminados':
+                $data = Client::with(['service', 'plan', 'item.wherehouseDetail.article'])
+                ->where(function($query) use ($search){
+                    if($search){
+                        $query->OrwhereHas('people', function($query) use($search){
+                            $query->whereRaw("(first_name like '%$search%' or last_name like '%$search%' or ci like '%$search%' or CONCAT(first_name, ' ', last_name) like '%$search%')");
+                        });
+                    }
+                })
+                ->whereNotNull('deleted_at')
+                ->whereRaw($query_filter)
+                ->orderBy('id', 'DESC')->paginate($paginate);
+                break;
+        }
+    
+        $type = $type;
+
+        
+        // dd($client);
+        return view('client.list', compact('data', 'cashier', 'type'));
+    }
+
     public function store(Request $request)
     {   
         // return $request;
+
+        $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
+
+        if(!$request->cashier_id || !$cashier)
+        {
+            return redirect()->route('clients.index')->with(['message' => 'Ups...', 'alert-type' => 'error']);
+        }
+        if($request->cashier_id != $cashier->id)
+        {
+            $request->merge(['cashier_id'=> $cashier->id]);
+        }
+
+
+
         if($request->subAmount == NULL)
         {
             $request->merge(['subAmount'=>0]);
@@ -82,6 +209,7 @@ class ClientController extends Controller
         try {
             $user = Auth::user()->id;
             $client = Client::create([
+                'busine_id' => $user->busine_id,
                 'cashier_id' => $request->cashier_id,
                 'service_id' => $request->service_id,
                 'plan_id' => $request->plan_id,
@@ -116,7 +244,7 @@ class ClientController extends Controller
 
     public function update(Request $request)
     {   
-        // return $request;
+        return $request;
         DB::beginTransaction();
         try {
             
@@ -143,12 +271,22 @@ class ClientController extends Controller
     {
         // return $id;
         try {
-            Client::where('id', $id)->update([
-                'deleted_at' => Carbon::now()
-            ]);
-            return redirect()->route('clients.index')->with(['message' => 'Anulado exitosamente.', 'alert-type' => 'success']);
 
-            // return response()->json(['message' => 'Anulado exitosamente.']);
+            $client = Client::where('id', $id)->where('deleted_at', null)->first();
+            if($client)
+            {
+                if(!$client->service_id && !$client->plan_id)
+                {
+                    return $client;
+                    // $adition = Adition::where('client_id', $client->id)
+
+                }
+            }
+            $client->update(['deleted_at' => Carbon::now()]);
+
+            
+
+            return redirect()->route('clients.index')->with(['message' => 'Anulado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
             //throw $th;
             return redirect()->route('clients.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
@@ -160,6 +298,16 @@ class ClientController extends Controller
     public function articleStore(Request $request)
     {
         // return $request;
+        $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
+
+        if(!$request->cashier_id || !$cashier)
+        {
+            return redirect()->route('clients.index')->with(['message' => 'Ups...', 'alert-type' => 'error']);
+        }
+        if($request->cashier_id != $cashier->id)
+        {
+            $request->merge(['cashier_id'=> $cashier->id]);
+        }
 
         if(!$request->total_pagar)
         {
@@ -266,6 +414,25 @@ class ClientController extends Controller
 
     public function aditionStore(Request $request)
     {
+        
+        $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
+
+        if(!$request->cashier_id || !$cashier)
+        {
+            return redirect()->route('clients.index')->with(['message' => 'Ups...', 'alert-type' => 'error']);
+        }
+        if($request->cashier_id != $cashier->id)
+        {
+            $request->merge(['cashier_id'=> $cashier->id]);
+        }
+
+        // if(!$request->cashier_id)
+        // {
+        //     return redirect()->route('clients.index')->with(['message' => 'Ups...', 'alert-type' => 'error']);
+        // }
+
+
+
         DB::beginTransaction();
         try {
             $ok = Client::find($request->client_id);

@@ -42,7 +42,7 @@
                 <div class="panel panel-bordered">
                     <div class="panel-body">                        
                         <div class="table-responsive">
-                            <table id="dataTable" class="table table-hover">
+                            <table id="dataTableStyle" class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th colspan="2"></th>
@@ -53,11 +53,11 @@
                                     <tr>
                                         <th style="text-align: center">Id</th>
                                         <th style="text-align: center">Artículo</th>
-                                        <th style="text-align: right">Precio de Compra</th>
-                                        <th style="text-align: right">Item Comprado</th>                        
-                                        <th style="text-align: right">Precio Mayoritario</th>           
-                                        <th style="text-align: right">Item Disponible</th>                             
-                                        <th style="text-align: right">Ganancia Unitaria</th>                                             
+                                        <th style="text-align: center">Precio Total de Compra</th>
+                                        <th style="text-align: center">Item Comprado</th>                        
+                                        <th style="text-align: center">Precio Compra "Unitario"</th>           
+                                        <th style="text-align: center">Item Disponible</th>                             
+                                        <th style="text-align: center">Precio de Venta</th>                                             
                                         <th style="text-align: right">Acciones</th>
                                     </tr>
                                 </thead>
@@ -100,7 +100,7 @@
                                             </td>
                                             <td style="text-align: right"> <small>Bs. {{$item->itemEarnings}}</small> </td>
                                             <td style="text-align: right">
-                                                @if (auth()->user()->hasPermission('delete_wherehouses'))
+                                                @if (auth()->user()->hasPermission('delete_wherehouses') && $item->item == $item->items)
                                                     <button title="Borrar" class="btn btn-sm btn-danger delete" onclick="deleteItem('{{ route('wherehouses.destroy', ['wherehouse' => $item->id]) }}')" data-toggle="modal" data-target="#delete-modal">
                                                         <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Borrar</span>
                                                     </button>

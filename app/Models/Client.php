@@ -9,6 +9,7 @@ class Client extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'busine_id',
         'cashier_id', 'service_id', 'plan_id', 'day_id', 'people_id', 'beforeImage', 'laterImage', 'beforeWeight',
         'laterWeight', 'start', 'finish', 'status', 'ip', 'userRegister_id', 'userDelete_id', 'deleted_at', 'amount', 'hour',
         'subAmount', 'credit'
@@ -31,6 +32,7 @@ class Client extends Model
     }
 
     public function plan()
+    
     {
         return $this->belongsTo(Plan::class, 'plan_id');
     }
@@ -53,6 +55,10 @@ class Client extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'userRegister_id');
+    }
+    public function userDelete()
+    {
+        return $this->belongsTo(User::class, 'userDelete_id');
     }
     public function adition()
     {

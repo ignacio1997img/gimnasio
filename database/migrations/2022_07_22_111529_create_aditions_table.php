@@ -24,6 +24,8 @@ class CreateAditionsTable extends Migration
             $table->timestamps();
             $table->foreignId('userRegister_id')->nullable()->constrained('users');
             $table->softDeletes();
+            $table->foreignId('userDelete_id')->nullable()->constrained('users');
+
         });
     }
 
