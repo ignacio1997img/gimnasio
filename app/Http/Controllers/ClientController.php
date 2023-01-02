@@ -105,7 +105,7 @@ class ClientController extends Controller
                     }
                 })
                 ->where('deleted_at', null)
-                ->whereRaw('subAmount != amount')
+                // ->whereRaw('subAmount != amount')
                 ->whereRaw($query_filter)
                 ->orderBy('id', 'DESC')->paginate($paginate);
                 break;
@@ -209,7 +209,7 @@ class ClientController extends Controller
         try {
             $user = Auth::user()->id;
             $client = Client::create([
-                'busine_id' => $user->busine_id,
+                'busine_id' => Auth::user()->busine_id,
                 'cashier_id' => $request->cashier_id,
                 'service_id' => $request->service_id,
                 'plan_id' => $request->plan_id,
@@ -270,6 +270,7 @@ class ClientController extends Controller
     public function destroy($id)
     {
         // return $id;
+        DB::beginTransaction();
         try {
 
             $client = Client::where('id', $id)->where('deleted_at', null)->first();
@@ -277,18 +278,33 @@ class ClientController extends Controller
             {
                 if(!$client->service_id && !$client->plan_id)
                 {
-                    return $client;
+                    // return 1;
+                    // return $client;
                     // $adition = Adition::where('client_id', $client->id)
+                    $items = Item::where('client_id', $client->id)->where('deleted_at', null)->get();
 
+                    foreach($items as $item)
+                    {
+                        WherehouseDetail::where('id', $item->wherehouseDetail_id)->increment('item', $item->item);
+                    }
+                    Adition::where('client_id', $client->id)->where('deleted_at', null)->update(['deleted_at' => Carbon::now(), 'userDelete_id'=>Auth::user()->id]);
+                    Item::where('client_id', $client->id)->where('deleted_at', null)->update(['deleted_at' => Carbon::now(), 'userDelete_id'=>Auth::user()->id]);
+                    $client->update(['deleted_at' => Carbon::now(), 'userDelete_id'=>Auth::user()->id]);
+                }
+                else
+                {   
+                    $client->update(['deleted_at' => Carbon::now(), 'userDelete_id'=>Auth::user()->id]);
+                    Adition::where('client_id', $client->id)->update(['deleted_at' => Carbon::now(), 'userDelete_id'=>Auth::user()->id]);
                 }
             }
-            $client->update(['deleted_at' => Carbon::now()]);
+            // $client->update(['deleted_at' => Carbon::now()]);
 
             
-
+            DB::commit();
             return redirect()->route('clients.index')->with(['message' => 'Anulado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
             //throw $th;
+            DB::rollBack();
             return redirect()->route('clients.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
             // return response()->json(['error' => 'Ocurrió un error.']);
         }
@@ -308,6 +324,7 @@ class ClientController extends Controller
         {
             $request->merge(['cashier_id'=> $cashier->id]);
         }
+
 
         if(!$request->total_pagar)
         {
@@ -329,16 +346,17 @@ class ClientController extends Controller
         {
             return redirect()->route('clients.index')->with(['message' => 'El cuota no debe ser mayor al monto total.', 'alert-type' => 'warning']);
         }
-        
+        // return $request;
         DB::beginTransaction();
         try {
             $user = Auth::user()->id;
             $client = Client::create([
+                        'busine_id' => Auth::user()->busine_id,
                         'cashier_id' => $request->cashier_id,
                         'people_id' => $request->people_id,
                         'userRegister_id' => $user,
                         'amount' => $request->amount,
-                        'subAmount' => $request->credits? $request->subAmount:$request->amount,
+                        'subAmount' => $request->credits? $request->subAmount:$amount,
                         'credit' => $request->credits? '1':'0'
                     ]);
             $client_id = $client->id;
@@ -359,7 +377,9 @@ class ClientController extends Controller
                         'itemEarnings' => $wherehouse->itemEarnings,
                         'amount' => $request->total_pagar[$i],
                         'client_id' => $client_id,
-                        'indice' => $i
+                        'indice' => $i,
+                        'userRegister_id' => $user,
+
                     ]);
                     $pagar+= $request->total_pagar[$i];
                 }
@@ -384,7 +404,9 @@ class ClientController extends Controller
                             'itemEarnings' => $aux->itemEarnings,
                             'amount' => $des * $aux->itemEarnings,
                             'client_id' => $client_id,
-                            'indice' => $i
+                            'indice' => $i,
+                            'userRegister_id' => $user,
+
 
                         ]);
                         $pagar = $pagar + ($des * $aux->itemEarnings);

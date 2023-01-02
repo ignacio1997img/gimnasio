@@ -153,6 +153,8 @@
                                             </a>
                                         </li>
                                     @endif --}}
+                                    <li><a href="" class="btn-transaction"  data-toggle="modal" title="Imprimir Calendario" >Lista de Pagos</a></li> 
+
                                     <li>
                                         <a href="" target="_blank" title="Imprimir">
                                             <i class="glyphicon glyphicon-print"></i> <span class="hidden-xs hidden-sm">Imprimir</span>
@@ -166,7 +168,7 @@
                                         <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
                                     </a>
                                 @endif --}}
-                            @if ($item->amount != $item->subAmount)
+                            @if ($item->amount != $item->subAmount && $item->deleted_at == NULL)
                                 <a href="#" data-toggle="modal" data-target="#payment-modal" data-item='@json($item)' title="Abonar Pago"  class="btn btn-sm btn-success">
                                     <i class="voyager-dollar"></i><span class="hidden-xs hidden-sm"> Abonar Pago</span>
                                 </a>
@@ -177,7 +179,7 @@
                             <a href="#" data-toggle="modal" data-target="#show-modal" data-item='@json($item)' data-user="{{$item->user->name}}" title="Ver" class="btn btn-sm btn-warning view">
                                 <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Ver</span>
                             </a>
-                            @if ($cashier)
+                            @if ($cashier && $item->deleted_at == NULL)
                                 @if ($item->status && $item->cashier->status == "abierta" )
                                     <button title="Borrar" class="btn btn-sm btn-danger delete" onclick="deleteItem('{{ route('clients.destroy', ['client' => $item->id]) }}')" data-toggle="modal" data-target="#delete-modal">
                                         <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Borrar</span>

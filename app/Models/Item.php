@@ -10,8 +10,10 @@ class Item extends Model
     use HasFactory;
 
     protected $fillable = [
-        'item', 'wherehouseDetail_id', 'itemEarnings', 'amount', 'deleted_at', 'client_id', 'indice'
+        'item', 'wherehouseDetail_id', 'itemEarnings', 'amount', 'deleted_at', 'client_id', 'indice',
+        'userRegister_id', 'userDelete_id'
     ];
+
     
     public function wherehouseDetail()
     {

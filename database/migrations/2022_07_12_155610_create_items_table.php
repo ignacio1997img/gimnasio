@@ -22,7 +22,10 @@ class CreateItemsTable extends Migration
             $table->decimal('amount', 5,2)->nullable();
             $table->smallInteger('indice')->nullable();
             $table->timestamps();
+            $table->foreignId('userRegister_id')->nullable()->constrained('users');
+
             $table->softDeletes();
+            $table->foreignId('userDelete_id')->nullable()->constrained('users');
         });
     }
 
