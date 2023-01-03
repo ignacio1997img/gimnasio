@@ -75,7 +75,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('cashiers/{cashier}/change/status', [CashierController::class, 'change_status'])->name('cashiers.change.status');//para que acepta los cajeros el  monto dado de 
     // Route::get('cashiers/{cashier}/amount', [CashierController::class, 'amount'])->name('cashiers.amount');
     // Route::post('cashiers/amount/store', [CashierController::class, 'amount_store'])->name('cashiers.amount.store');
-    // Route::post('cashiers/{cashier}/close/revert', [CashierController::class, 'close_revert'])->name('cashiers.close.revert');
+    Route::post('cashiers/{cashier}/close/revert', [CashierController::class, 'close_revert'])->name('cashiers.close.revert');
     Route::get('cashiers/{cashier}/close/', [CashierController::class, 'close'])->name('cashiers.close');//para cerrar la caja el cajero vista 
     Route::post('cashiers/{cashier}/close/store', [CashierController::class, 'close_store'])->name('cashiers.close.store'); //para que el cajerop cierre la caja 
     Route::get('cashiers/{cashier}/confirm_close', [CashierController::class, 'confirm_close'])->name('cashiers.confirm_close');

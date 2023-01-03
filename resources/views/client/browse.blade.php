@@ -848,7 +848,7 @@
                         html_start+='</div>'
                     $('#div_1').html(html_start);
                     var html_finish ='<div class="form-group">'
-                        html_finish+=    '<small>Inicio.</small>'
+                        html_finish+=    '<small>Fin.</small>'
                         html_finish+=    '<input type="date" class="form-control" name="finish">'
                         html_finish+='</div>'
                     $('#div_2').html(html_finish);

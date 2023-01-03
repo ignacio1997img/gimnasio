@@ -234,7 +234,7 @@
         @csrf
         {{-- <input type="hidden" name="vault_id" value="{{  }}"> --}}
         <div class="modal fade" tabindex="-1" id="vaults-egreso-modal" role="dialog">
-            <div class="modal-dialog modal-success modal-lg">
+            <div class="modal-dialog modal-primary modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
@@ -315,7 +315,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success">Registrar ingreso</button>
+                        <button type="submit" class="btn btn-primary">Registrar Egreso</button>
                     </div>
                 </div>
             </div>

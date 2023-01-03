@@ -221,6 +221,32 @@ class CashierController extends Controller
     }
 
 
+    public function close_revert($id, Request $request){
+        DB::beginTransaction();
+        try {
+            $cashier = Cashier::findOrFail($id);
+            if($cashier->status == 'cierre pendiente'){
+                $cashier->closed_at = NULL;
+                $cashier->status = 'abierta';
+                $cashier->save();
+
+                CashiersDetail::where('cashier_id', $id)->update([
+                    'deleted_at' => Carbon::now()
+                ]);
+
+                DB::commit();
+                return redirect()->route('voyager.dashboard')->with(['message' => 'Caja reabierta exitosamente.', 'alert-type' => 'success']);
+            }
+
+            return redirect()->route('voyager.dashboard')->with(['message' => 'Lo siento, su caja ya fué cerrada.', 'alert-type' => 'warning']);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            // dd($th);
+            return redirect()->route('voyager.dashboard')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        }
+    }
+
+
 
 
     //para confirmar el cierre de caja 

@@ -11,7 +11,7 @@ use App\Models\VaultsDetailsCash;
 use App\Models\VaultsClosure;
 use App\Models\VaultsClosuresDetail;
 use Illuminate\Support\Carbon;
-
+use App\Models\Cashier;
 use Illuminate\Support\Facades\Auth;
 
 class VaultController extends Controller
@@ -135,11 +135,12 @@ class VaultController extends Controller
     } 
 
     public function close_store($id, Request $request){
-        // return 1;
-        // $cashier_open = Cashier::where('status', 'abierta')->where('deleted_at', NULL)->count();
-        // if($cashier_open){
-        //     return redirect()->route('vaults.index')->with(['message' => 'No puedes cerrar bóveda porque existe una caja abierta.', 'alert-type' => 'error']);
-        // }
+
+        $cashier_open = Cashier::whereRaw("status = 'abierta' or status = 'apertura pendiente' or status = 'cierre pendiente'")->where('deleted_at', NULL)->count();
+        // return $cashier_open;
+        if($cashier_open!=0){
+            return redirect()->route('vaults.index')->with(['message' => 'No puedes cerrar bóveda porque existe caja abierta en el sistema.', 'alert-type' => 'error']);
+        }
 
         DB::beginTransaction();
         try {

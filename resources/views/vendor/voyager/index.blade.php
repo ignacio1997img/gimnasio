@@ -396,6 +396,27 @@
                         </div>
                     </div>
 
+                    <form action="{{ route('cashiers.close.revert', ['cashier' => $cashier->id]) }}" method="post">
+                        @csrf
+                        <div class="modal fade" tabindex="-1" id="cashier-revert-modal" role="dialog">
+                            <div class="modal-dialog modal-success">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title"><i class="voyager-key"></i> Reabrir Caja</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="text-muted">Si reabre la caja deberá realizar el arqueo nuevamente, ¿Desea continuar?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-success">Si, reabrir</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
                 @endif
             @else
                 <div class="row">
