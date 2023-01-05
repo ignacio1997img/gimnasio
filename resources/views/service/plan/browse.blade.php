@@ -209,7 +209,7 @@
                                 </div>
                             </div>   
                         </div>
-                        <input type="checkbox" data-toggle="toggle" data-size="small" id="checkbox1">
+                        {{-- <input type="checkbox" data-toggle="toggle" data-size="small" id="checkbox1"> --}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>

@@ -63,7 +63,7 @@ Route::group(['prefix' => 'admin'], function () {
 
 
     Route::get('busines',[BusineController::class, 'index'])->name('voyager.busines.index');
-    Route::get('busines/user/{id}',[BusineController::class, 'indexUser'])->name('busines-user.index');
+    Route::get('busines/user/{id?}',[BusineController::class, 'indexUser'])->name('busines-user.index');
     Route::post('busines/user/store',[BusineController::class, 'storeUser'])->name('busines-user.store');
     Route::post('busines/user/update',[BusineController::class, 'updateUser'])->name('busines-user.update');
 
