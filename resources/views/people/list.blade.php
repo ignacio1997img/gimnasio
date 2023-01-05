@@ -1,6 +1,6 @@
 <div class="col-md-12">
     <div class="table-responsive">
-        <table id="dataTable" class="table table-bordered table-hover">
+        <table id="dataTableStyle" class="table table-bordered table-hover">
             <thead>
                 <tr>
                     <th>ID</th>

@@ -46,6 +46,11 @@ Route::group(['prefix' => 'admin'], function () {
     Route::resource('providers', ProviderController::class);
 
     Route::get('services', [ServiceController::class, 'index'])->name('voyager.services.index');
+    Route::get('services/{service}/plans', [ServiceController::class, 'indexPlan'])->name('service-plans.index');
+    Route::post('services/plans/store', [ServiceController::class, 'storePlan'])->name('service-plans.store');
+    Route::post('services/plans/update', [ServiceController::class, 'updatePlan'])->name('service-plans.update');
+    
+ 
 
     Route::resource('wherehouses', WherehouseController::class);
     Route::get('wherehouses/items-disponible', [WherehouseController::class, 'show'])->name('wherehouses-items.itemDisponible');

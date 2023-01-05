@@ -26,6 +26,8 @@ class CreateServicesTable extends Migration
             $table->foreignId('register_user')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();
+            $table->foreignId('userDelete_id')->nullable()->constrained('users');
+
         });
     }
 

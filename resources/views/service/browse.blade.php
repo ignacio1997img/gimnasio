@@ -1,6 +1,6 @@
 @extends('voyager::master')
 
-@section('page_title', 'Viendo Datos Personales')
+@section('page_title', 'Viendo Servicios')
 
 @section('page_header')
     <div class="container-fluid">
@@ -38,7 +38,7 @@
                 <div class="panel panel-bordered">
                     <div class="panel-body">                        
                         <div class="table-responsive">
-                            <table id="dataTable" class="table table-hover">
+                            <table id="dataTableStyle" class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th style="text-align: center">Id</th>
@@ -67,20 +67,23 @@
                                                     <label class="label label-warning">Inactivo</label>
                                                 @endif
                                             </td>
-                                            @if (!auth()->user()->hasRole('admin'))
-                                                <td class="no-sort no-click bread-actions text-right">
-                                                    @if (auth()->user()->hasPermission('read_services'))
+                                            <td class="no-sort no-click bread-actions text-right">
+                                                    @if (auth()->user()->hasPermission('browse_plans'))
+                                                        <a href="{{ route('service-plans.index', ['service' => $item->id]) }}" title="Ver Planes" class="btn btn-sm btn-warning view">
+                                                            <i class="fa-solid fa-list"></i> <span class="hidden-xs hidden-sm">Planes</span>
+                                                        </a>
+                                                    @endif
+                                                    {{-- @if (auth()->user()->hasPermission('read_services'))
                                                         <a href="{{ route('voyager.services.show', ['id' => $item->id]) }}" title="Ver" class="btn btn-sm btn-warning view">
                                                             <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Ver</span>
                                                         </a>
-                                                    @endif
+                                                    @endif --}}
                                                     @if (auth()->user()->hasPermission('edit_services'))
                                                         <a href="{{ route('voyager.services.edit', ['id' => $item->id]) }}" title="Editar" class="btn btn-sm btn-primary edit">
                                                             <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
                                                         </a>
                                                     @endif
-                                                </td>
-                                            @endif
+                                            </td>
                                             
                                         </tr>
                                     @empty

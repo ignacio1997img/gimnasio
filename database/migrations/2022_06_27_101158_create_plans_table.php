@@ -15,11 +15,18 @@ class CreatePlansTable extends Migration
     {
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('service_id')->nullable()->constrained('services');            
             $table->string('name')->nullable();
             $table->text('description')->nullable();
+            $table->integer('day')->nullable();
+            $table->decimal('amount',10, 2)->nullable();
             $table->smallInteger('status')->default(1);          
             $table->timestamps();
+            $table->foreignId('userRegister_id')->nullable()->constrained('users');
+
+
             $table->softDeletes();
+            $table->foreignId('userDelete_id')->nullable()->constrained('users');
         });
     }
 

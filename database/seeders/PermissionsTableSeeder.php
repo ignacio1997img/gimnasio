@@ -62,9 +62,26 @@ class PermissionsTableSeeder extends Seeder
             ]);
         }
 
-        Permission::generateFor('plans');
+        $keys = [
+            'browse_services',
+            'add_services',
+            'edit_services',
+            'delete_services',
+            'browse_plans',        
+            'add_plans'  ,
+            'edit_plans',
+            'delete_plans',
+        ];
+
+        foreach ($keys as $key) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'table_name' => 'services',
+            ]);
+        }
+
+
         Permission::generateFor('days');
-        Permission::generateFor('services');
         Permission::generateFor('providers');
         Permission::generateFor('categories');
         Permission::generateFor('articles');

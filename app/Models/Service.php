@@ -18,11 +18,17 @@ class Service extends Model
         'ip',
         'mac',
         'register_user',
-        'deleted_at'
+        'deleted_at',
+        'userDelete_id'
     ];
 
     public function busine()
     {
         return $this->belongsTo(Busine::class, 'busine_id');
+    }
+
+    public function plan()
+    {
+        return $this->hasMany(Plan::class, 'service_id');
     }
 }
