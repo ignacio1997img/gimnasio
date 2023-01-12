@@ -130,7 +130,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <small>Categorias.</small>
-                                        <select name="category_id" class="form-control select2">
+                                        <select name="category_id" class="form-control select2" required>
                                             <option value="">Seleccione una categoria.</option>
                                             @foreach ($category as $item)
                                                 <option value="{{$item->id}}">{{$item->name}}</option>
@@ -141,7 +141,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <small>Articulo.</small>
-                                        <input type="text" name="name" class="form-control">
+                                        <input type="text" name="name" class="form-control" required>
                                     </div>
                                 </div>   
                             </div>
@@ -149,13 +149,13 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <small>Persentacion.</small>
-                                        <input type="text" name="presentation" class="form-control">
+                                        <input type="text" name="presentation" class="form-control" required>
                                     </div>
                                 </div>   
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <small>Imagen.</small>
-                                        <input accept="image/png,image/jpeg" type="file" name="image" class="form-control">
+                                        <input accept="image/png,image/jpeg" type="file" name="image" class="form-control" required>
                                     </div>
                                 </div>   
                             </div>
