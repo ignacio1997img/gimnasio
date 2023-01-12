@@ -80,6 +80,22 @@ class PermissionsTableSeeder extends Seeder
             ]);
         }
 
+        $keys = [
+            'browse_shifts',
+            'add_shifts',
+            'edit_shifts',
+            'browse_hour',
+            'add_hour',
+            'edit_hour'
+        ];
+
+        foreach ($keys as $key) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'table_name' => 'shifts',
+            ]);
+        }
+
 
         Permission::generateFor('days');
         Permission::generateFor('providers');

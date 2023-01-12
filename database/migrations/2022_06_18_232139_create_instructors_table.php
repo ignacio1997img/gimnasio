@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAditionsTable extends Migration
+class CreateInstructorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,15 @@ class CreateAditionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('aditions', function (Blueprint $table) {
+        Schema::create('instructors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cashier_id')->nullable()->constrained('cashiers');
-            $table->foreignId('client_id')->nullable()->constrained('clients');
-            $table->decimal('cant', 10,2)->nullable();
-            $table->text('observation')->nullable();
-            $table->string('type')->nullable();
+            $table->foreignId('people_id')->nullable()->constrained('people');
+            $table->text('description')->nullable();
             $table->smallInteger('status')->default(1);
             $table->timestamps();
             $table->foreignId('userRegister_id')->nullable()->constrained('users');
             $table->softDeletes();
             $table->foreignId('userDelete_id')->nullable()->constrained('users');
-
         });
     }
 
@@ -36,6 +32,6 @@ class CreateAditionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('aditions');
+        Schema::dropIfExists('instructors');
     }
 }

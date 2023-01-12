@@ -10,9 +10,23 @@ class Client extends Model
     use HasFactory;
     protected $fillable = [
         'busine_id',
-        'cashier_id', 'service_id', 'plan_id', 'day_id', 'people_id', 'beforeImage', 'laterImage', 'beforeWeight',
-        'laterWeight', 'start', 'finish', 'status', 'ip', 'userRegister_id', 'userDelete_id', 'deleted_at', 'amount', 'hour',
-        'subAmount', 'credit'
+        'cashier_id',
+        'type',
+        'service_id', 
+        'people_id',
+        'plan_id',
+        'hour_id',
+        'hourInstructor_id',
+        'day',
+        'start',
+        'finish',
+        'subAmount',
+        'amount',
+        'credit',
+        'status',
+        'userRegister_id',
+        'deleted_at',
+        'userDelete_id'
     ];
 
 

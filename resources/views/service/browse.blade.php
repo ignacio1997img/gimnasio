@@ -68,6 +68,9 @@
                                                 @endif
                                             </td>
                                             <td class="no-sort no-click bread-actions text-right">
+                                                <a href="{{route('service-hour.index', ['service'=>$item->id])}}" title="Horarios" class="btn btn-sm btn-dark">
+                                                    <i class="fa-solid fa-clock"></i> <span class="hidden-xs hidden-sm">Horas</span>
+                                                </a>
                                                     @if (auth()->user()->hasPermission('browse_plans'))
                                                         <a href="{{ route('service-plans.index', ['service' => $item->id]) }}" title="Ver Planes" class="btn btn-sm btn-warning view">
                                                             <i class="fa-solid fa-list"></i> <span class="hidden-xs hidden-sm">Planes</span>

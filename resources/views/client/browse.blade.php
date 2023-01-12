@@ -159,7 +159,8 @@
                             <div class="col-sm-3"id="texts" style="display:none">
                                 <div class="form-group">
                                     <small>Monto Recibido.</small>
-                                    <input type="number" name="subAmount" id="input-subAmount" min="0" step="0.1" class="form-control" placeholder="Monto recibo Bs.">
+                                    {{-- <input type="number" name="subAmount" id="input-subAmount" min="0" step="0.1" class="form-control" placeholder="Monto recibo Bs."> --}}
+                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" name="subAmount" id="input-subAmount" placeholder="Monto recibido Bs." required>
 
                                 </div>
                             </div>                               
@@ -180,6 +181,7 @@
     <form id="form-search" action="{{ route('clients.store') }}" method="post">
         @csrf
         <input type="hidden" name="cashier_id" value="{{ $cashier? $cashier->id:'' }}">
+        <input type="hidden" name="type" value="servicio">
         <div class="modal fade" id="registar_modal" role="dialog">
             <div class="modal-dialog modal-success modal-lg">
                 <div class="modal-content">
@@ -195,61 +197,70 @@
                     @endif
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <div class="form-group">
                                     <small>Tipo de Servicios.</small>
-                                    <select name="service_id"  class="form-control select2" required>
-                                        <option value="">Seleccione un servicio</option>
+                                    <select name="service_id" id="service_id" class="form-control select2" required>
+                                        <option selected disabled value="">--Seleccione un servicio--</option>
                                         @foreach ($service as $item)
                                             <option value="{{$item->id}}" >{{$item->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>  
-                            <div class="col-sm-2">
+                            <div class="col-sm-3">
                                 <div class="form-group">
                                     <small>plan.</small>
                                     <select name="plan_id" id="plan_id" class="form-control select2" required>
-                                        <option value="">Seleccione un plan</option>
-                                        @foreach ($plan as $item)
-                                                <option value="{{$item->id}}">{{$item->name}}</option>
-                                        @endforeach
+                                        
                                     </select>
                                 </div>
                             </div>  
-                            <div class="col-sm-3" id="div_1">
-                               
+
+                            <div id="div_1" class="col-sm-3">
+                                
                             </div>  
-                            <div class="col-sm-3" id="div_2">
-                             
-                            </div> 
+                            <div id="div_2" class="col-sm-3">
+                                
+                            </div>  
+                            
                         </div>
                         <div class="row">
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    <small>Turno.</small>
-                                    <select name="hour" class="form-control select2" required>
-                                        <option value="">Seleccione un turno</option>
-                                        <option value="1">Mañana</option>
-                                        <option value="2">Tarde</option>
-                                        <option value="3">Noche</option>
+                                    <small>Horarios.</small>
+                                    <select name="hour_id" id="hour_id" class="form-control select2" required>
                                     </select>
                                 </div>
                             </div>  
                             <div class="col-sm-6">
                                 <div class="form-group">
+                                    <small>Instructores.</small>
+                                    <select name="instructor_id" id="instructor_id" class="form-control select2" required>
+                                    </select>
+                                </div>
+                            </div>  
+                                            
+                        </div>          
+                        
+                        <hr>
+                        <div class="row">
+                            
+                            <div class="col-sm-6">
+                                <div class="form-group">
                                     <small>Cliente.</small>
-                                    <select name="people_id" id="select_people1" class="form-control"></select>
+                                    <select name="people_id" id="select_people1" class="form-control" required></select>
                                     
                                 </div>
                             </div>   
-                            <div class="col-sm-3">
+                            <div id="div_amount" class="col-sm-3">
                                 <div class="form-group">
                                     <small>Monto Total.</small>
-                                    <input type="number" class="form-control" placeholder="Monto Total a Pagar" min="0" step="0.1" name="amount">
+                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" placeholder="Monto Total a Pagar" min="0" step="0.1" name="amount">
+                                    {{-- <input type="number"  style="text-align: right" onkeypress="return filterFloat(event,this);" id="cantidad" placeholder="Cantidad Articulo" class="form-control text" title="Cantidad"> --}}
                                 </div>
                             </div>                    
-                        </div>                 
+                        </div>      
                         
 
 
@@ -273,7 +284,7 @@
                             <div class="col-sm-3"id="text" style="display:none">
                                 <div class="form-group">
                                     <small>Monto Recibido.</small>
-                                    <input type="number" name="subAmount" id="input-subAmount" min="0" step="0.1" class="form-control" value="0" placeholder="Monto recibo Bs.">
+                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" class="form-control" step="0.1" name="subAmount" id="input-subAmount" value="0" placeholder="Monto recibido Bs.">
 
                                 </div>
                             </div>                               
@@ -294,7 +305,7 @@
         {{-- Payment modal --}}
     <form action="{{ route('clients-adition.store') }}" id="form-payment" method="POST">
         @csrf
-        <div class="modal modal-primary fade" tabindex="-1" id="payment-modal" role="dialog">
+        <div class="modal modal-success fade" tabindex="-1" id="payment-modal" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -312,7 +323,7 @@
                         <input type="hidden" name="client_id" id="client_id">
                         <div class="form-group">
                             <label for="subAmount">Monto</label>
-                            <input type="number" class="form-control" name="subAmount" min="1" step="0.1" placeholder="Monto" required>
+                            <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" name="subAmount" placeholder="Monto" required>
                         </div>
                         <div class="form-group">
                             <label for="observation">Observaciones</label>
@@ -322,7 +333,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         @if ($cashier)
-                            <button type="submit" class="btn btn-dark">Pagar</button>
+                            <button type="submit" class="btn btn-success">Pagar</button>
                         @endif 
                     </div>
                 </div>
@@ -615,6 +626,8 @@
     <script>
         var countPage = 10, order = 'id', typeOrder = 'desc';
         $(document).ready(() => {
+
+
             list();
             $('.radio-type').click(function(){
                 list();
@@ -659,9 +672,13 @@
         $(function()
         {
                     
-            $('#plan_id').on('change',functionDay);
-            // // $('#plan_id1').on('change',functionDay1);
-            // $('#category').on('change', onselect_article);
+            $('#service_id').on('change',functionPlan);
+            $('#service_id').on('change',functionHour);
+            $('#plan_id').on('change',funtionInfPlan);
+            $('#hour_id').on('change',funtionInstructor);
+
+
+
 
             var indexTable = 0;
             var i=0;
@@ -815,51 +832,152 @@
             // Mostrar las opciones encontradas
             return $(`  <div>
                             <b style="font-size: 16px">${option.first_name} ${option.last_name}</b><br>
-                            <spam>NIT/CI: ${option.ci ? option.ci : 'No definido'} - Cel: ${option.phone ? option.phone : 'No definido'}</spam>
+                            <spam>CI: ${option.ci ? option.ci : 'No definido'} - Cel: ${option.phone ? option.phone : 'No definido'}</spam>
                         </div>`);
         }
 
         // funcion para mostrar los dias de un plan diario
-        function functionDay()
-        {            
-            id= $(this).val();
-            // alert(id)
-            if(id>=1)
-            {
-                if(id==4)    
+        function functionPlan()
+        {
+                var id =  $(this).val();   
+                $('#instructor_id').html(''); 
+                $('#plan_id').html(''); 
+                $('#div_1').html('')
+                $('#div_2').html('')
+                var html_amount = `<div class="form-group">
+                                    <small>Monto Total.</small>
+                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" class="form-control" placeholder="Monto Total a Pagar" min="0" step="0.1" name="amount">
+                                </div>`
+                $('#div_amount').html(html_amount)
+
+                if(id >=1)
                 {
-                    var html_day ='<div class="form-group">'
-                    html_day+='<small>Dia.</small>'
-                    html_day+='<select name="day_id" class="form-control select2" required>'
-                    html_day+='<option value="">Seleccione un plan</option>'
-                    html_day+='@foreach ($day as $item)'
-                    html_day+='<option value="{{$item->id}}">{{$item->name}}</option>'
-                    html_day+='@endforeach'
-                    html_day+='</select>'
-                    html_day+='</div>'
-                    $('#div_1').html(html_day);
-                    $('#div_2').html('');
-                }          
+                    $.get('{{route('clients-ajax-list.plan')}}/'+id, function(data){
+                        var html_plan=    '<option selected disabled value="">--Seleccione un plan--</option>'
+                            for(var i=0; i<data.length; ++i)
+                            html_plan += '<option value="'+data[i].id+'">'+data[i].name+'</option>'
+
+                        $('#plan_id').html(html_plan);           
+                    });
+                }
+                else
+                {    
+                    $('#plan_id').html('');
+                }
+        }
+
+        //para que despliquede los horarios de cada servicios que ofrese
+        function functionHour()
+        {
+                var id =  $(this).val();  
+                $('#instructor_id').html(''); 
+                $('#plan_id').html(''); 
+                $('#div_1').html('')
+                $('#div_2').html('')
+                var html_amount = `<div class="form-group">
+                                    <small>Monto Total.</small>
+                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" class="form-control" placeholder="Monto Total a Pagar" min="0" step="0.1" name="amount">
+                                </div>`
+                $('#div_amount').html(html_amount)
+
+                if(id >=1)
+                {
+                    $.get('{{route('clients-ajax-list.hour')}}/'+id, function(data){
+                        var html_hour=    '<option selected disabled value="">--Seleccione un horario--</option>'
+                            for(var i=0; i<data.length; ++i)
+                            html_hour += '<option value="'+data[i].id+'">'+data[i].name+'</option>'
+
+                        $('#hour_id').html(html_hour);           
+                    });
+                }
                 else
                 {
-                    var html_start ='<div class="form-group">'
-                        html_start+=    '<small>Inicio.</small>'
-                        html_start+=    '<input type="date" class="form-control" name="start">'
-                        html_start+='</div>'
-                    $('#div_1').html(html_start);
-                    var html_finish ='<div class="form-group">'
-                        html_finish+=    '<small>Fin.</small>'
-                        html_finish+=    '<input type="date" class="form-control" name="finish">'
-                        html_finish+='</div>'
-                    $('#div_2').html(html_finish);
-                }  
-            }
-            else
+                    var html_hour=    ''       
+                    $('#hour_id').html(html_hour);
+                }
+        }
+        //para obtener la informacion de cada plan
+        function funtionInfPlan()
+        {
+            var id =  $(this).val();    
+            if(id >=1)
             {
-                $('#div_1').html('');
-                $('#div_2').html('');
+                $.get('{{route('clients-ajax-plan.inf')}}/'+id, function(data){
+                    // alert(data.day)         
+                    if(data.day == null || data.amount == null)
+                    {
+                        var html_start = `<div class="form-group">
+                                    <small>Inicio.</small>
+                                    <input type="date" name="start" class="form-control" required>
+                                </div>`
+                        $('#div_1').html(html_start)
+
+                        var html_finish = `<div class="form-group">
+                                    <small>Fin.</small>
+                                    <input type="date" name="finish" class="form-control" required>
+                                </div>`
+                        $('#div_2').html(html_finish)
+
+
+                        var html_amount = `<div class="form-group">
+                                    <small>Monto Total.</small>
+                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" class="form-control" placeholder="Monto Total a Pagar" min="0" step="0.1" name="amount">
+                                </div>`
+
+                        $('#div_amount').html(html_amount)
+                    }
+                    else
+                    {
+                        var html_day = `<div class="form-group">
+                                    <small>Dias.</small>
+                                    <input type="text" id="dayPlan" value="${data.day}" disabled class="form-control">
+                                    <input type="hidden" name="day" id="dayPlans" value="${data.day}" class="form-control">
+                                </div>`
+
+                        $('#div_1').html(html_day)
+
+                        var html_start = `<div class="form-group">
+                                    <small>Inicio.</small>
+                                    <input type="date" name="start" class="form-control" required>
+                                </div>`
+                        $('#div_2').html(html_start)
+
+                        // $('#div_2').html('')
+
+
+                        var html_amount = `<div class="form-group">
+                                    <small>Monto Total.</small>
+                                    <input type="text" style="text-align: right" value="${data.amount}" disabled class="form-control">
+                                    <input type="hidden" name="amount"  value="${data.amount}" class="form-control">
+                                </div>`
+
+                        $('#div_amount').html(html_amount)
+                    }
+                });
             }
         }
+
+        //para poder ver los instructores de cada horarios
+        function funtionInstructor()
+        {
+            var id =  $(this).val();    
+            if(id >=1)
+            {
+                $.get('{{route('clients-ajax-list.instructor')}}/'+id, function(data){
+                    var html_instructor=    '<option selected disabled value="">--Seleccione un Instructor--</option>'
+                        for(var i=0; i<data.length; ++i)
+                        html_instructor += '<option value="'+data[i].id+'">'+data[i].instructor.people.first_name+' '+data[i].instructor.people.last_name +'</option>'
+
+                    $('#instructor_id').html(html_instructor);           
+                });
+            }
+            else
+            { 
+                $('#instructor_id').html('');
+            }
+        }
+
+
 
         // para mostrar el input de al credito de servicio
         function myFunction() {
@@ -1142,5 +1260,42 @@
             });
         
        
+    </script>
+
+    <script type="text/javascript">
+        function filterFloat(evt,input){
+            // Backspace = 8, Enter = 13, ‘0′ = 48, ‘9′ = 57, ‘.’ = 46, ‘-’ = 43
+            var key = window.Event ? evt.which : evt.keyCode;    
+            var chark = String.fromCharCode(key);
+            var tempValue = input.value+chark;
+            if(key >= 48 && key <= 57){
+                if(filter(tempValue)=== false){
+                    return false;
+                }else{       
+                    return true;
+                }
+            }else{
+                if(key == 8 || key == 13 || key == 0) {     
+                    return true;              
+                }else if(key == 46){
+                        if(filter(tempValue)=== false){
+                            return false;
+                        }else{       
+                            return true;
+                        }
+                }else{
+                    return false;
+                }
+            }
+        }
+        function filter(__val__){
+            var preg = /^([0-9]+\.?[0-9]{0,2})$/; 
+            if(preg.test(__val__) === true){
+                return true;
+            }else{
+            return false;
+            }
+            
+        }
     </script>
 @stop

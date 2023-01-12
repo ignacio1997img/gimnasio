@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAditionsTable extends Migration
+class CreateHourInstructorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,16 @@ class CreateAditionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('aditions', function (Blueprint $table) {
+        Schema::create('hour_instructors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cashier_id')->nullable()->constrained('cashiers');
-            $table->foreignId('client_id')->nullable()->constrained('clients');
-            $table->decimal('cant', 10,2)->nullable();
-            $table->text('observation')->nullable();
-            $table->string('type')->nullable();
+            $table->foreignId('hour_id')->nullable()->constrained('hours');
+            $table->foreignId('instructor_id')->nullable()->constrained('instructors');
+            $table->text('description')->nullable();
             $table->smallInteger('status')->default(1);
             $table->timestamps();
             $table->foreignId('userRegister_id')->nullable()->constrained('users');
             $table->softDeletes();
             $table->foreignId('userDelete_id')->nullable()->constrained('users');
-
         });
     }
 
@@ -36,6 +33,6 @@ class CreateAditionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('aditions');
+        Schema::dropIfExists('hour_instructors');
     }
 }

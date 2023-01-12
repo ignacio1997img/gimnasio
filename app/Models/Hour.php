@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Instructor extends Model
+class Hour extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'people_id',
+        'service_id',
+        'name',
         'description',
         'status',
         'userRegister_id',
@@ -18,13 +19,8 @@ class Instructor extends Model
         'userDelete_id'
     ];
 
-    public function people()
+    public function service()
     {
-        return $this->belongsTo(People::class, 'people_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'userRegister_id');
+        return $this->belongsTo(Service::class. 'service_id');
     }
 }

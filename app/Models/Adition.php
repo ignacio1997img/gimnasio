@@ -12,10 +12,16 @@ class Adition extends Model
     protected $fillable = [
         'client_id', 'cant', 'status', 'deleted_at', 'cashier_id', 'observation', 'type', 'userRegister_id',  'userDelete_id'
     ];
+
+ 
     
     public function user()
     {
         return $this->belongsTo(User::class, 'userRegister_id');
+    }
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'client_id');
     }
 
 

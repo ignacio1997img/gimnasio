@@ -12,6 +12,7 @@ use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\VaultController;
 use App\Http\Controllers\WherehouseController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 /*
@@ -46,9 +47,27 @@ Route::group(['prefix' => 'admin'], function () {
     Route::resource('providers', ProviderController::class);
 
     Route::get('services', [ServiceController::class, 'index'])->name('voyager.services.index');
-    Route::get('services/{service}/plans', [ServiceController::class, 'indexPlan'])->name('service-plans.index');
+    Route::get('services/{service?}/plans', [ServiceController::class, 'indexPlan'])->name('service-plans.index');
     Route::post('services/plans/store', [ServiceController::class, 'storePlan'])->name('service-plans.store');
     Route::post('services/plans/update', [ServiceController::class, 'updatePlan'])->name('service-plans.update');
+
+    Route::get('services/{service?}/hour', [ServiceController::class, 'indexHour'])->name('service-hour.index');
+    Route::post('services/hour/store', [ServiceController::class, 'storeHour'])->name('service-hour.store');
+    Route::post('services/hour/update', [ServiceController::class, 'updateHour'])->name('service-hour.update');
+
+    Route::get('services/{service?}/hour/{hour?}/instructor', [ServiceController::class, 'indexInstructor'])->name('service-hour-instructor.index');
+    Route::post('services/hour/instructor/store', [ServiceController::class, 'storeInstructor'])->name('service-hour-instructor.store');
+    Route::get('services/{service}/hour/{hour}/instructor/{id?}/inactivo', [ServiceController::class, 'inactivoInstructor'])->name('service-hour-instructor.inactivo');
+    Route::get('services/{service}/hour/{hour}/instructor/{id?}/activo', [ServiceController::class, 'activoInstructor'])->name('service-hour-instructor.activo');
+
+
+
+
+    // para los turnos 
+    // Route::resource('shifts', ShiftController::class);
+    // Route::post('shifts/update', [ShiftController::class, 'update'])->name('shifts.update');
+    // Route::get('shifts/hour/index/{id?}', [ShiftController::class, 'indexHour'])->name('shifts-hour.index');
+
     
  
 
@@ -59,7 +78,14 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('people/ajax/list/{search?}', [PeopleController::class, 'list']);
     Route::post('people/store', [PeopleController::class, 'store'])->name(('people.store'));
 
-    Route::get('people/list/ajax', [PeopleController::class, 'lists']);
+    Route::get('people/list/ajax', [PeopleController::class, 'lists']);//para obtener los lista de persona en registro de servicio
+
+    Route::resource('instructors', InstructorController::class);
+    Route::get('instructors/ajax/list/{type}/{search?}', [InstructorController::class, 'list']);
+
+
+
+
 
 
     Route::get('busines',[BusineController::class, 'index'])->name('voyager.busines.index');
@@ -102,9 +128,14 @@ Route::group(['prefix' => 'admin'], function () {
     Route::resource('clients', ClientController::class);
     Route::get('clients/ajax/list/{type}/{search?}', [ClientController::class, 'list']);
     Route::post('clients/adition/store', [ClientController::class, 'aditionStore'])->name('clients-adition.store');
-    Route::post('clients/update', [ClientController::class, 'update'])->name('clients.update');
+    // Route::post('clients/update', [ClientController::class, 'update'])->name('clients.update');
     Route::post('clients/article', [ClientController::class, 'articleStore'])->name('clients-article.store');
-    // Route::delete('clients/delete', [ClientController::class, 'destroy'])->name('checks.delet');
+    Route::get('clients/ajax/plans/list/{id?}', [ClientController::class, 'ajaxPlan'])->name('clients-ajax-list.plan');
+    Route::get('clients/ajax/hour/list/{id?}', [ClientController::class, 'ajaxHour'])->name('clients-ajax-list.hour');
+    Route::get('clients/ajax/instructor/list/{id?}', [ClientController::class, 'ajaxInstructor'])->name('clients-ajax-list.instructor');
+    Route::get('clients/ajax/plans/inf/{id?}', [ClientController::class, 'ajaxInfPlan'])->name('clients-ajax-plan.inf');
+
+
     // Route::get('planillas/pagos/people/search', [AttentionController::class, 'planillas_pagos_people_search']);
 
 
@@ -117,7 +148,6 @@ Route::group(['prefix' => 'admin'], function () {
     Route::resource('client', ClientController::class);//en observacion
     
 
-    Route::resource('instructor', InstructorController::class);
 
 
 

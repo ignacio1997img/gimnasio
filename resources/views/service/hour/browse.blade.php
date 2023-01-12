@@ -1,7 +1,7 @@
 @extends('voyager::master')
 
 @section('page_title', 'Viendo Planes')
-@if (auth()->user()->hasPermission('browse_plans'))
+@if (auth()->user()->hasPermission('browse_hour'))
 @section('page_header')
     <div class="container-fluid">
         <div class="row">
@@ -10,19 +10,16 @@
                     <div class="panel-body" style="padding: 0px">
                         <div class="col-md-8" style="padding: 0px">
                             <h1 class="page-title">
-                                <i class="fa-solid fa-list"></i>  Planes {{$service->name}}
+                                <i class="fa-solid fa-clock"></i> Horarios [{{$service->name}}]
                             </h1>
-                            {{-- <div class="alert alert-info">
-                                <strong>Información:</strong>
-                                <p>Puede obtener el valor de cada parámetro en cualquier lugar de su sitio llamando <code>setting('group.key')</code></p>
-                            </div> --}}
                         </div>
+
                         <div class="col-md-4 text-right" style="margin-top: 30px">
                             <a href="{{route('voyager.services.index')}}" title="Volver"  data-toggle="modal" class="btn btn-warning">
                                 <i class="fa-solid fa-arrow-rotate-left"></i><span> Volver</span>
                             </a>
-                            @if (auth()->user()->hasPermission('add_plans') && !auth()->user()->hasRole('admin'))
-                                <a href="#" title="Nuevo Plan" data-target="#modal-create-plan" data-toggle="modal" class="btn btn-success">
+                            @if (auth()->user()->hasPermission('add_hour') && !auth()->user()->hasRole('admin'))
+                                <a href="#" title="Nuevo turnos" data-target="#modal-create-shift" data-toggle="modal" class="btn btn-success">
                                     <i class="voyager-plus"></i> <span>Crear</span>
                                 </a>
                             @endif
@@ -45,20 +42,18 @@
                                 <thead>
                                     <tr>
                                         <th style="text-align: center">Id</th>
-                                        <th style="text-align: center">Plan</th>
-                                        <th style="text-align: center">Total de Dias</th>
-                                        <th style="text-align: center">Monto Total</th>
+                                        <th style="text-align: center">Horarios</th>
+                                        <th style="text-align: center">Descripción</th>
                                         <th style="text-align: center">Estado</th>     
                                         <th style="text-align: right">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($plans as $item)
+                                    @forelse ($hour as $item)
                                         <tr>
                                             <td style="text-align: center">{{ $item->id }}</td>   
                                             <td style="text-align: center">{{ $item->name }}</td>   
-                                            <td style="text-align: center">{{ $item->day?$item->day:'S/N' }}</td>
-                                            <td style="text-align: center">{{ $item->amount?number_format($item->amount,2):'S/N' }}</td>
+                                            <td style="text-align: center">{{ $item->description }}</td>
                                             <td style="text-align: center">
                                                 @if ($item->status)
                                                     <label class="label label-success">Activo</label>
@@ -67,17 +62,16 @@
                                                 @endif
                                             </td>
                                             <td class="no-sort no-click bread-actions text-right">
-                                                    
-                                                    {{-- @if (auth()->user()->hasPermission('read_services'))
-                                                        <a href="{{ route('voyager.services.show', ['id' => $item->id]) }}" title="Ver" class="btn btn-sm btn-warning view">
-                                                            <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Ver</span>
-                                                        </a>
-                                                    @endif --}}
-                                                @if (auth()->user()->hasPermission('edit_plans'))
-                                                    <a data-toggle="modal" data-target="#modal-edit-plan" data-item="{{$item}}" title="Editar" class="btn btn-sm btn-primary edit">
+                                                <a href="{{route('service-hour-instructor.index', ['service'=>$service->id, 'hour'=>$item->id])}}" title="instructor" class="btn btn-sm btn-dark">
+                                                    <i class="fa-solid fa-person-chalkboard"></i><span class="hidden-xs hidden-sm"> Instructor</span>
+                                                </a>
+                                                {{-- @if (auth()->user()->hasPermission('edit_shifts')) --}}
+                                                    <a data-toggle="modal" data-target="#modal-edit-shift" data-item="{{$item}}" title="Editar" class="btn btn-sm btn-primary edit">
                                                         <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
                                                     </a>
-                                                @endif
+                                                {{-- @endif --}}
+
+
                                             </td>
                                             
                                         </tr>
@@ -99,13 +93,13 @@
 
 
 
-    <form action="{{route('service-plans.store')}}" id="form-create-plan" method="POST">
-        <div class="modal fade" tabindex="-1" id="modal-create-plan" role="dialog">
+    <form action="{{route('service-hour.store')}}" id="form-create-plan" method="POST">
+        <div class="modal fade" tabindex="-1" id="modal-create-shift" role="dialog">
             <div class="modal-dialog modal-success">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title"><i class="fa-solid fa-list"></i> Agregar Plan</h4>
+                        <h4 class="modal-title"><i class="fa-solid fa-clock"></i> Agregar Horarios</h4>
                     </div>
                     <div class="modal-body">
                         @csrf
@@ -113,31 +107,14 @@
                             $busine_id =\Auth::user()->busine_id;
                         @endphp
                         <input type="hidden" name="service_id" value="{{$service->id}}">
-
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <small>Nombre</small>
-                                    <input type="text" name="name" class="form-control" required placeholder="Diario">
-                                </div>
-                            </div> 
-
-                            <div class="col-sm-3">
-                                <div class="form-group">
-                                    <small>Cant Días</small>
-                                    <input type="number" name="day" class="form-control" style="text-align: right">
-                                </div>
-                            </div> 
-                            <div class="col-sm-3">
-                                <div class="form-group">
-                                    <small>Monto</small>
-                                    <input type="number" name="amount" class="form-control" style="text-align: right">
+                                    <small>Horarios</small>
+                                    <input type="text" name="name" class="form-control" required placeholder="Horarios">
                                 </div>
                             </div> 
                         </div>  
-
-                     
-                        
                         <div class="form-group">
                             <small>Descripcion</small>
                             <textarea name="description" class="form-control" rows="3"></textarea>
@@ -152,46 +129,29 @@
         </div>
     </form>
 
-    <form action="{{route('service-plans.update')}}" id="form-edit-plan" method="POST">
-        <div class="modal fade" tabindex="-1" id="modal-edit-plan" role="dialog">
+    <form action="{{route('service-hour.update')}}" id="form-edit-plan" method="POST">
+        <div class="modal fade" tabindex="-1" id="modal-edit-shift" role="dialog">
             <div class="modal-dialog modal-primary">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title"><i class="fa-solid fa-list"></i> Editar Plan</h4>
+                        <h4 class="modal-title"><i class="fa-solid fa-clock"></i> Editar Horarios</h4>
                     </div>
                     <div class="modal-body">
                         @csrf
                         @php
                             $busine_id =\Auth::user()->busine_id;
                         @endphp
-                        <input type="hidden" name="service_id" value="{{$service->id}}">
                         <input type="hidden" name="id" id="id">
-
+                        <input type="hidden" name="service_id" value="{{$service->id}}">
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <small>Nombre</small>
-                                    <input type="text" name="name" id="name" class="form-control" required placeholder="Diario">
-                                </div>
-                            </div> 
-
-                            <div class="col-sm-3">
-                                <div class="form-group">
-                                    <small>Cant Días</small>
-                                    <input type="number" name="day" id="day" class="form-control" style="text-align: right">
-                                </div>
-                            </div> 
-                            <div class="col-sm-3">
-                                <div class="form-group">
-                                    <small>Monto</small>
-                                    <input type="number" name="amount" id="amount" class="form-control" style="text-align: right">
+                                    <small>Turno</small>
+                                    <input type="text" name="name" id="turno" class="form-control" required placeholder="Turno">
                                 </div>
                             </div> 
                         </div>  
-
-                     
-                        
                         <div class="form-group">
                             <small>Descripcion</small>
                             <textarea name="description" id="description" class="form-control" rows="3"></textarea>
@@ -212,7 +172,6 @@
                                 </div>
                             </div>   
                         </div>
-                        {{-- <input type="checkbox" data-toggle="toggle" data-size="small" id="checkbox1"> --}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -319,15 +278,14 @@
             
          
         })
-        $('#modal-edit-plan').on('show.bs.modal', function (event)
+
+        $('#modal-edit-shift').on('show.bs.modal', function (event)
             {
                 var button = $(event.relatedTarget);
                 var item = button.data('item');
                 var modal = $(this);
                 modal.find('.modal-body #id').val(item.id);
-                modal.find('.modal-body #name').val(item.name);
-                modal.find('.modal-body #day').val(item.day);
-                modal.find('.modal-body #amount').val(item.amount);
+                modal.find('.modal-body #turno').val(item.name);
                 modal.find('.modal-body #description').val(item.description);
                 // alert(item.status)
                 if(item.status==1)

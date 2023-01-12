@@ -34,6 +34,7 @@ class PermissionRoleTableSeeder extends Seeder
                                             table_name = "articles" or
                                             table_name = "people" or
                                             table_name = "services" or
+                                            table_name = "shifts" or
                                             table_name = "wherehouses" or
                                             table_name = "clients" or
 

@@ -18,11 +18,14 @@ class CreateClientsTable extends Migration
 
             $table->foreignId('busine_id')->nullable()->constrained('busines'); //para saber de que gimnasio es
             $table->foreignId('cashier_id')->nullable()->constrained('cashiers'); //para saber de que caja es 
+
             $table->string('type')->nullable();//para saber si es un plan o es venta de producto
-
-            $table->foreignId('plan_id')->nullable()->constrained('plans');//para 
-
             $table->foreignId('people_id')->nullable()->constrained('people');
+
+            $table->foreignId('service_id')->nullable()->constrained('services');//para 
+            $table->foreignId('plan_id')->nullable()->constrained('plans');//para 
+            $table->foreignId('hour_id')->nullable()->constrained('hours');//para 
+            $table->foreignId('hourInstructor_id')->nullable()->constrained('hour_instructors');//para             
 
             $table->smallInteger('day')->nullable();//para saber cuantos dias es el servicio
             $table->date('start')->nullable();
@@ -32,7 +35,7 @@ class CreateClientsTable extends Migration
             $table->decimal('amount',10,2)->nullable();
             $table->smallInteger('credit')->nullable();            
 
-            $table->smallInteger('status')->default(1);
+            $table->string('status')->default('pendiente');
 
             $table->timestamps();
             $table->foreignId('userRegister_id')->nullable()->constrained('users');

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Day;
+// use App\Models\Day;
 use App\Models\Plan;
 use App\Models\People;
 use App\Models\Cashier;
@@ -18,12 +18,19 @@ use App\Models\Wherehouse;
 use App\Models\WherehouseDetail;
 use App\Models\Item;
 use App\Models\Adition;
+use App\Models\Hour;
+use App\Models\HourInstructor;
+use App\Models\User;
+use DateTime;
 
 class ClientController extends Controller
 {
     public function index()
     {
-        $day = Day::all();
+
+        // return Plan::where('deleted_at', null)->where('status', 1)->get();
+
+        // $day = Day::all();
         $service = Service::all();
         $plan = Plan::all();
 
@@ -63,13 +70,11 @@ class ClientController extends Controller
 
 
      
-        return view('client.browse', compact('day', 'service', 'plan', 'people', 'cashier', 'client', 'article', 'category'));
+        return view('client.browse', compact('service', 'plan', 'people', 'cashier', 'client', 'article', 'category'));
     }
 
     public function list($type, $search = null)
     {
-        // return $type;
-
         $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
 
         $user = Auth::user();
@@ -105,7 +110,7 @@ class ClientController extends Controller
                     }
                 })
                 ->where('deleted_at', null)
-                // ->whereRaw('subAmount != amount')
+                ->whereRaw('subAmount != 0')
                 ->whereRaw($query_filter)
                 ->orderBy('id', 'DESC')->paginate($paginate);
                 break;
@@ -118,10 +123,9 @@ class ClientController extends Controller
                         });
                     }
                 })
-                ->whereNotNull('service_id')
-                ->whereNotNull('plan_id')
                 ->where('deleted_at', null)
-                ->whereRaw('subAmount != amount')
+                ->where('type', 'servicio')
+                ->whereRaw('subAmount != 0')
                 ->whereRaw($query_filter)
                 ->orderBy('id', 'DESC')->paginate($paginate);
                 break;
@@ -135,9 +139,8 @@ class ClientController extends Controller
                     }
                 })
                 ->where('deleted_at', null)
-                ->where('service_id', null)
-                ->where('plan_id', null)
-                ->whereRaw('subAmount != amount')
+                ->where('type', 'producto')
+                ->whereRaw('subAmount != 0')
                 ->whereRaw($query_filter)
                 ->orderBy('id', 'DESC')->paginate($paginate);
                 break;
@@ -151,7 +154,7 @@ class ClientController extends Controller
                     }
                 })
                 ->where('deleted_at', null)
-                ->whereRaw('subAmount = amount')
+                ->whereRaw('subAmount = 0')
                 ->whereRaw($query_filter)
                 ->orderBy('id', 'DESC')->paginate($paginate);
                 break;
@@ -203,41 +206,66 @@ class ClientController extends Controller
         {
             return redirect()->route('clients.index')->with(['message' => 'El cuota no debe ser mayor al monto total.', 'alert-type' => 'warning']);
         }
-        // return $request;
 
+        //para ver si tiene fecha inicio y fin
         DB::beginTransaction();
+        if(!$request->day)
+        {
+            $fechaActual = Carbon::parse($request->start);
+
+            $fechaVigencia = Carbon::parse($request->finish);
+
+            $day = $fechaVigencia->diffInDays($fechaActual);
+            $request->merge(['day'=>$day+1]);
+            // return 1;
+        }
+        else
+        {
+            $fechaActual = Carbon::createFromFormat('Y-m-d', $request->start);
+            $fechaActual = $fechaActual->addDay($request->day-1);
+            $request->merge(['finish'=>$fechaActual]);   
+            // return $request;         
+        }
         try {
             $user = Auth::user()->id;
+            // return $request;
+
+            $aux= $request->amount - ($request->credit? $request->subAmount: $request->amount);
+            // return $aux;
+
+            // if($request->subAmount > $request )
             $client = Client::create([
                 'busine_id' => Auth::user()->busine_id,
                 'cashier_id' => $request->cashier_id,
+                'type'=> $request->type,
                 'service_id' => $request->service_id,
                 'plan_id' => $request->plan_id,
-                'day_id' => $request->day_id?$request->day_id:null,
                 'people_id' => $request->people_id,
                 'start' => $request->start? $request->start: null,
                 'finish' => $request->finish?$request->finish:null,
                 'userRegister_id' => $user,
-                'subAmount' => $request->credit? $request->subAmount:$request->amount,
+                'subAmount' => $request->credit? ($request->amount - $request->subAmount):0,
                 'amount' => $request->amount,
-                'hour' => $request->hour,
-                'credit' => $request->credit? '1':'0'
+                'hour_id' => $request->hour_id,
+                'hourInstructor_id' =>$request->instructor_id,
+                'credit' => $request->credit? '1':'0',
+                'day'=>$request->day,
+                'status'=>$aux==0? 'pagado' :'pendiente',
             ]);
-            // return 1;
-            // return $client;
+
             Adition::create([
                 'client_id' => $client->id,
                 'cashier_id' => $request->cashier_id,
                 'cant' => $request->credit? $request->subAmount:$request->amount,
                 'observation' => 'Pago al momento del servicio',
-                'type'=> 'servicio',
+                'type'=> $request->type,
                 'userRegister_id' => $user           
             ]);
             DB::commit();
             return redirect()->route('clients.index')->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
             DB::rollBack();
-            // return 0;
+            return 0;
             return redirect()->route('clients.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }
@@ -328,8 +356,7 @@ class ClientController extends Controller
 
         if(!$request->total_pagar)
         {
-            // return 1;
-            return redirect()->route('clients.index')->with(['message' => 'Introdusca algun producto o articulo.', 'alert-type' => 'warning']);
+            return redirect()->route('clients.index')->with(['message' => 'Introduzca algun producto o articulo.', 'alert-type' => 'warning']);
         }
 
 
@@ -346,6 +373,7 @@ class ClientController extends Controller
         {
             return redirect()->route('clients.index')->with(['message' => 'El cuota no debe ser mayor al monto total.', 'alert-type' => 'warning']);
         }
+
         // return $request;
         DB::beginTransaction();
         try {
@@ -355,8 +383,11 @@ class ClientController extends Controller
                         'cashier_id' => $request->cashier_id,
                         'people_id' => $request->people_id,
                         'userRegister_id' => $user,
+                        'type'=>'producto',
                         'amount' => $request->amount,
-                        'subAmount' => $request->credits? $request->subAmount:$amount,
+                        'start'=> date('Y-m-d'),
+                        'finish'=> date('Y-m-d'),
+                        'subAmount' => $request->credits? ($amount - $request->subAmount):$amount,
                         'credit' => $request->credits? '1':'0'
                     ]);
             $client_id = $client->id;
@@ -385,6 +416,7 @@ class ClientController extends Controller
                 }
                 else
                 {
+                    // para que pueda sacar productos de varios registro pero del mismo item y del mismo precio
                     $cant = $request->cant_stock[$i];
                     while($cant > 0)
                     {
@@ -424,6 +456,7 @@ class ClientController extends Controller
                 'type'=> 'producto',
                 'userRegister_id' => $user
             ]);
+            // return 'si';
                 DB::commit();
             return redirect()->route('clients.index')->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success']);
 
@@ -436,7 +469,7 @@ class ClientController extends Controller
 
     public function aditionStore(Request $request)
     {
-        
+        // return $request;
         $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
 
         if(!$request->cashier_id || !$cashier)
@@ -448,20 +481,16 @@ class ClientController extends Controller
             $request->merge(['cashier_id'=> $cashier->id]);
         }
 
-        // if(!$request->cashier_id)
-        // {
-        //     return redirect()->route('clients.index')->with(['message' => 'Ups...', 'alert-type' => 'error']);
-        // }
-
-
 
         DB::beginTransaction();
         try {
             $ok = Client::find($request->client_id);
-            if($ok->amount < ($request->subAmount + $ok->subAmount))
+            if(($ok->subAmount - $request->subAmount) < 0)
             {
+                // return 0;
                 return redirect()->route('clients.index')->with(['message' => 'El monto ingresado supera a la cantidad de la deuda.', 'alert-type' => 'warning']);
             }
+            // return 1;
             Adition::create([
                 'client_id' => $ok->id,
                 'cashier_id' => $request->cashier_id,
@@ -472,7 +501,11 @@ class ClientController extends Controller
 
             ]);
             // return 1;
-            $ok->update(['subAmount' => ($ok->subAmount+$request->subAmount) ]);
+            $ok->update(['subAmount' => ($ok->subAmount-$request->subAmount) ]);
+            if($ok->subAmount == 0)
+            {
+                $ok->update(['status' => 'pagado']);
+            }
             DB::commit();
             return redirect()->route('clients.index')->with(['message' => 'Pago registrado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
@@ -483,6 +516,33 @@ class ClientController extends Controller
     }
 
 
+
+    //***************************************** AJAX ******************************************************* */
+
+// para seleccionar plan de cada servicio elejido
+
+    public function ajaxPlan($id)
+    {
+        // return User::all();
+        return Plan::where('service_id', $id)->where('deleted_at', null)->where('status', 1)->get();
+    }
+    //para obtener la infomacuion de cada plan-service
+    public function ajaxInfPlan($id)
+    {
+        return Plan::where('id', $id)->first();
+    }
+
+    //para selecionar el horario de cada servicio
+    public function ajaxHour($id)
+    {
+        return Hour::where('deleted_at', null)->where('status',1)->where('service_id', $id)->get();
+    }
+
+    public function ajaxInstructor($id)
+    {
+        return HourInstructor::with(['instructor.people'])
+        ->where('hour_id', $id)->get();
+    }
 
 
 

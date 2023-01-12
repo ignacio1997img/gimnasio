@@ -8,7 +8,6 @@
                     <th style="text-align: center">Servicios</th>
                     <th style="text-align: center">Detalles</th>
                     <th style="text-align: center">Monto</th>
-                    <th style="text-align: center">Deuda</th>
                     <th style="text-align: center">Estado</th>                                        
                     <th style="text-align: center">Registrado</th>  
                     @if ($type == 'eliminados')
@@ -71,7 +70,7 @@
                                 Plan: {{ $item->plan->name}}
                                 <br> 
                                 @if ($item->plan_id != 4)
-                                    <b>{{date('d/m/Y', strtotime($item->start))}} Hasta {{date('d/m/Y', strtotime($item->finish))}}</b>
+                                    <b>{{date('d/m/Y', strtotime($item->start))}} <br> Hasta <br>{{date('d/m/Y', strtotime($item->finish))}}</b>
                                 @else
                                     Dia: <small><b>{{ $item->day->name }}</b></small>
                                 @endif        
@@ -88,21 +87,6 @@
                                     @endif
                                 </b>  
                             @else
-                                {{-- @php
-                                    $articles = \DB::table('items as i')
-                                        ->join('wherehouse_details as w', 'w.id', 'i.wherehouseDetail_id')
-                                        ->join('articles as a', 'a.id', 'w.article_id')
-                                        ->where('i.client_id', $item->id)->where('i.deleted_at', null)
-                                        ->select('a.name','a.presentation', DB::raw("SUM(i.item) as cant"), DB::raw("SUM(i.amount) as money"))
-                                        ->groupBy('i.indice')->get();
-                                @endphp
-                                
-                                @foreach ($articles as $ar)
-                                    <small><b>{{$ar->name}}-{{$ar->presentation}}</b></small>
-                                    <br>
-                                    <small><b>Cantidad: {{$ar->cant}}    Venta:{{$ar->money}}</b></small>
-                                    <br>
-                                @endforeach --}}
 
                                 @foreach ($item->item as $ar)
                                     <p>
@@ -114,19 +98,19 @@
                             @endif
                                                                  
                         </td>
-                        <td style="text-align: center">{{ $item->amount }}</td> 
                         <td style="text-align: center">
-                            @if ($item->amount == $item->subAmount)
-                                <label class="label label-success">Pagado</label>
-                            @else
-                                <label class="label label-warning">{{number_format($item->amount - $item->subAmount,2)}}</label>
+                            <p>Total: Bs.{{ $item->amount }}</p>
+                            <p>Deuda: Bs.{{number_format($item->subAmount,2)}}</p>
+                        </td> 
+                        <td style="text-align: center">
+                            @if ($item->status == 'pendiente')
+                                <label class="label label-warning">Pendiente</label>
                             @endif
-                        </td>
-                        <td style="text-align: center">
-                            @if ($item->status)
-                                <label class="label label-success">Vigente</label>
-                            @else
-                                <label class="label label-warning">Finalizado</label>
+                            @if ($item->status == 'pagado')
+                                <label class="label label-success">pagado</label>
+                            @endif
+                            @if ($item->status == 'atrazado')
+                                <label class="label label-danger">Atrazado</label>
                             @endif
                         </td>
                         <td style="text-align: center">
@@ -168,7 +152,9 @@
                                         <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
                                     </a>
                                 @endif --}}
-                            @if ($item->amount != $item->subAmount && $item->deleted_at == NULL)
+                            {{-- @if ($cashier && $item->deleted_at == NULL) --}}
+
+                            @if ($item->subAmount !=0 && $item->deleted_at == NULL && $cashier)
                                 <a href="#" data-toggle="modal" data-target="#payment-modal" data-item='@json($item)' title="Abonar Pago"  class="btn btn-sm btn-success">
                                     <i class="voyager-dollar"></i><span class="hidden-xs hidden-sm"> Abonar Pago</span>
                                 </a>
