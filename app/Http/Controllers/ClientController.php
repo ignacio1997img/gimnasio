@@ -517,12 +517,13 @@ class ClientController extends Controller
 
     public function print($id)
     {
-        $data = Client::with(['people', 'service', 'plan', 'hour', 'hourInstructor.instructor.people', 'item.wherehouseDetail.article'])
+        $data = Client::with(['people', 'service', 'plan', 'hour', 'hourInstructor.instructor.people', 'item.wherehouseDetail.article', 'user'])
                 ->where('deleted_at', null)
                 ->where('id', $id)
                 ->orderBy('id', 'DESC')->first();
 
-        return $data;
+        // return $data;
+
         return view('client.print', compact('data'));
     }
 

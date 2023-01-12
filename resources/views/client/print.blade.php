@@ -114,7 +114,7 @@
         <table width="100%">
             <tr>
                 <td colspan="2" style="text-align: center">
-                    <h3 style="margin-bottom: 0px; margin-top: 0px; font-size: 12px"><small>DETALLE DEL SERVICIO O PRODUCTO</small> </h3>
+                    <h3 style="margin-bottom: 0px; margin-top: 0px; font-size: 12px"><small>DETALLE DEL SERVICIO O VENTA DE PRODUCTO</small> </h3>
                 </td>
             </tr>
         </table>
@@ -144,14 +144,22 @@
                 </tr>
             </table>
         @else
+            @php
+                $total =0;
+            @endphp
             <table width="100%" cellpadding="2" cellspacing="0" border="0" style="font-size: 12px">
                 <tr style="text-align: center">
+                    <th class="border" style="width: 60%">
+                        DETALLE
+                    </th>   
                     <th class="border" style="width: 5%">
-                        ATRASO
+                        CANTIDAD
                     </th>
-                    <th class="border" style="width: 70%">
-                        DIAS PAGADO
-                    </th>                
+
+                    <th class="border" style="width: 5%">
+                        PRECIO
+                    </th>
+                                 
                     <th class="border" style="width: 25%">
                         TOTAL
                     </th>
@@ -159,12 +167,40 @@
                 @php
                     $total=0;
                 @endphp
+                @foreach ($data->item as $item)
+                    <tr>
+                        <td style="text-align: left">
+                            {{$item->wherehouseDetail->article->name}}
+                        </td> 
+                        <td style="text-align: right">
+                            {{$item->item}}
+                        </td>                 
+                        <td style="text-align: right">
+                            {{$item->itemEarnings}}
+                        </td>
+                        <td style="text-align: right">
+                            {{$item->amount}}
+                        </td>
+                        @php
+                            $total+=$item->amount;
+                        @endphp
+                    </tr>
+                @endforeach
                 
                 <tr>
-                    <th colspan="2" class="border" style="text-align: center; width: 75%">
+                    <th colspan="3"  class="border" style="text-align: center; width: 75%">
                         TOTAL (BS)
                     </th>
                     <th class="border" style="text-align: right; width: 25%">
+                        {{ number_format($total, 2, ',','.') }}
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="3"  class="border" style="text-align: center; width: 75%">
+                        DEUDA (BS)
+                    </th>
+                    <th class="border" style="text-align: right; width: 25%">
+                        {{ number_format($data->subAmount, 2, ',','.') }}
                     </th>
                 </tr>
             </table>
@@ -179,21 +215,12 @@
         </table>
         <table width="100%" cellpadding="2" cellspacing="0" border="0" style="font-size: 12px">
             <tr>
-                <td style="text-align: right; width: 40%">
-                </td>
-                <td style="text-align: center; width: 60%">
-                </td>
-            </tr>
-            <tr>
-                <td style="text-align: right; width: 40%">
-                    COD TRANS:
-                </td>
-                <td style="text-align: center; width: 60%">
-                    
-                    {{-- {{str_pad($transaction_id, 15, '0', STR_PAD_LEFT);}} --}}
+                <td colspan="2" style="text-align: center;">
+                    {{$data->user->name}}
                 </td>
             </tr>
         </table>
+        <br>
         <hr>
         <table width="100%" cellpadding="5" style="font-size: 10px">
             <tr>
@@ -225,7 +252,7 @@
         <table width="100%" style="font-size: 8px">
             <tr style="text-align: center">
                 <td>
-                    <small><b>LOANSAPP V1</b></small>
+                    <small><b>GYM V1</b></small>
                 </td>
             </tr>
         </table>
