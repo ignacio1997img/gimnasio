@@ -93,24 +93,6 @@ class DataTypesTableSeeder extends Seeder
             ),
             4 => 
             array (
-                'id' => 8,
-                'name' => 'days',
-                'slug' => 'days',
-                'display_name_singular' => 'Día',
-                'display_name_plural' => 'Días',
-                'icon' => 'fa-solid fa-calendar-day',
-                'model_name' => 'App\\Models\\Day',
-                'policy_name' => NULL,
-                'controller' => NULL,
-                'description' => NULL,
-                'generate_permissions' => 1,
-                'server_side' => 0,
-                'details' => '{"order_column":null,"order_display_column":null,"order_direction":"asc","default_search_key":null,"scope":null}',
-                'created_at' => '2022-06-27 07:19:21',
-                'updated_at' => '2022-06-27 07:20:33',
-            ),
-            5 => 
-            array (
                 'id' => 14,
                 'name' => 'busines',
                 'slug' => 'busines',
@@ -127,7 +109,7 @@ class DataTypesTableSeeder extends Seeder
                 'created_at' => '2022-07-11 04:57:54',
                 'updated_at' => '2022-07-11 05:01:09',
             ),
-            6 => 
+            5 => 
             array (
                 'id' => 16,
                 'name' => 'services',
@@ -143,7 +125,7 @@ class DataTypesTableSeeder extends Seeder
                 'server_side' => 0,
                 'details' => '{"order_column":null,"order_display_column":null,"order_direction":"asc","default_search_key":null,"scope":null}',
                 'created_at' => '2022-07-20 12:08:15',
-                'updated_at' => '2022-07-20 12:15:42',
+                'updated_at' => '2023-01-12 08:35:16',
             ),
         ));
         

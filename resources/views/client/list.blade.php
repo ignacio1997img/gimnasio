@@ -66,26 +66,11 @@
                         </td>
                         <td style="text-align: center">{{ $item->service_id ? $item->service->name:'Productos' }}</td>
                         <td style="text-align: center">
-                            @if ( $item->plan)
+                            @if ($item->plan)
                                 Plan: {{ $item->plan->name}}
                                 <br> 
-                                @if ($item->plan_id != 4)
                                     <b>{{date('d/m/Y', strtotime($item->start))}} <br> Hasta <br>{{date('d/m/Y', strtotime($item->finish))}}</b>
-                                @else
-                                    Dia: <small><b>{{ $item->day->name }}</b></small>
-                                @endif        
-                                <br>
-                                <b>Turno: 
-                                    @if($item->hour == 1)
-                                        Mañana
-                                    @endif
-                                    @if($item->hour == 2)
-                                        Tarde
-                                    @endif
-                                    @if($item->hour == 3)
-                                        Noche
-                                    @endif
-                                </b>  
+                                 
                             @else
 
                                 @foreach ($item->item as $ar)
@@ -139,8 +124,13 @@
                                     @endif --}}
                                     <li><a href="" class="btn-transaction"  data-toggle="modal" title="Imprimir Calendario" >Lista de Pagos</a></li> 
 
-                                    <li>
+                                    {{-- <li>
                                         <a href="" target="_blank" title="Imprimir">
+                                            <i class="glyphicon glyphicon-print"></i> <span class="hidden-xs hidden-sm">Imprimir</span>
+                                        </a>
+                                    </li> --}}
+                                    <li>
+                                        <a onclick="printClient({{$item->id}})"  title="Imprimir"  class="btn btn-danger">
                                             <i class="glyphicon glyphicon-print"></i> <span class="hidden-xs hidden-sm">Imprimir</span>
                                         </a>
                                     </li>

@@ -51,11 +51,14 @@ class Client extends Model
         return $this->belongsTo(Plan::class, 'plan_id');
     }
 
-    public function day()
+    public function hour()
     {
-        return $this->belongsTo(Day::class, 'day_id');
+        return $this->belongsTo(Hour::class, 'hour_id');
     }
-
+    public function hourInstructor()
+    {
+        return $this->belongsTo(HourInstructor::class, 'hourInstructor_id');
+    }
     public function people()
     {
         return $this->belongsTo(People::class, 'people_id');

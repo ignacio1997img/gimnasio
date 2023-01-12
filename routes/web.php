@@ -135,6 +135,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('clients/ajax/instructor/list/{id?}', [ClientController::class, 'ajaxInstructor'])->name('clients-ajax-list.instructor');
     Route::get('clients/ajax/plans/inf/{id?}', [ClientController::class, 'ajaxInfPlan'])->name('clients-ajax-plan.inf');
 
+    Route::get('clients/factura/{id?}', [ClientController::class, 'print']);
+
 
     // Route::get('planillas/pagos/people/search', [AttentionController::class, 'planillas_pagos_people_search']);
 

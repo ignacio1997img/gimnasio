@@ -1259,6 +1259,12 @@
                 
             });
         
+
+        // Para imprimir la factura del servicio
+        function printClient(id)
+        {
+            window.open("{{ url('admin/clients/factura') }}/"+id, "Factura", `width=320, height=700`)
+        }
        
     </script>
 

@@ -95,7 +95,7 @@ class MenuItemsTableSeeder extends Seeder
                 'parent_id' => NULL,
                 'order' => 9,
                 'created_at' => '2021-06-02 13:55:32',
-                'updated_at' => '2023-01-09 02:36:06',
+                'updated_at' => '2023-01-09 19:45:29',
                 'route' => NULL,
                 'parameters' => '',
             ),
@@ -191,7 +191,7 @@ class MenuItemsTableSeeder extends Seeder
                 'parent_id' => NULL,
                 'order' => 8,
                 'created_at' => '2021-06-02 10:07:53',
-                'updated_at' => '2023-01-09 02:36:06',
+                'updated_at' => '2023-01-09 19:45:29',
                 'route' => NULL,
                 'parameters' => '',
             ),
@@ -261,22 +261,6 @@ class MenuItemsTableSeeder extends Seeder
             ),
             15 => 
             array (
-                'id' => 20,
-                'menu_id' => 1,
-                'title' => 'Días',
-                'url' => '',
-                'target' => '_self',
-                'icon_class' => 'fa-solid fa-calendar-day',
-                'color' => '#000000',
-                'parent_id' => 13,
-                'order' => 4,
-                'created_at' => '2022-06-27 07:19:21',
-                'updated_at' => '2022-06-27 07:21:19',
-                'route' => 'voyager.days.index',
-                'parameters' => 'null',
-            ),
-            16 => 
-            array (
                 'id' => 23,
                 'menu_id' => 1,
                 'title' => 'Bóveda',
@@ -291,7 +275,7 @@ class MenuItemsTableSeeder extends Seeder
                 'route' => 'vaults.index',
                 'parameters' => NULL,
             ),
-            17 => 
+            16 => 
             array (
                 'id' => 24,
                 'menu_id' => 1,
@@ -307,7 +291,7 @@ class MenuItemsTableSeeder extends Seeder
                 'route' => 'cashiers.index',
                 'parameters' => NULL,
             ),
-            18 => 
+            17 => 
             array (
                 'id' => 27,
                 'menu_id' => 1,
@@ -323,7 +307,7 @@ class MenuItemsTableSeeder extends Seeder
                 'route' => 'categories.index',
                 'parameters' => NULL,
             ),
-            19 => 
+            18 => 
             array (
                 'id' => 28,
                 'menu_id' => 1,
@@ -339,7 +323,7 @@ class MenuItemsTableSeeder extends Seeder
                 'route' => 'articles.index',
                 'parameters' => 'null',
             ),
-            20 => 
+            19 => 
             array (
                 'id' => 29,
                 'menu_id' => 1,
@@ -355,7 +339,7 @@ class MenuItemsTableSeeder extends Seeder
                 'route' => 'wherehouses.index',
                 'parameters' => 'null',
             ),
-            21 => 
+            20 => 
             array (
                 'id' => 30,
                 'menu_id' => 1,
@@ -371,7 +355,7 @@ class MenuItemsTableSeeder extends Seeder
                 'route' => 'providers.index',
                 'parameters' => 'null',
             ),
-            22 => 
+            21 => 
             array (
                 'id' => 32,
                 'menu_id' => 1,
@@ -383,11 +367,11 @@ class MenuItemsTableSeeder extends Seeder
                 'parent_id' => NULL,
                 'order' => 7,
                 'created_at' => '2022-07-11 04:57:54',
-                'updated_at' => '2023-01-09 02:36:06',
+                'updated_at' => '2023-01-09 19:45:29',
                 'route' => 'voyager.busines.index',
                 'parameters' => NULL,
             ),
-            23 => 
+            22 => 
             array (
                 'id' => 33,
                 'menu_id' => 1,
@@ -403,7 +387,7 @@ class MenuItemsTableSeeder extends Seeder
                 'route' => NULL,
                 'parameters' => '',
             ),
-            24 => 
+            23 => 
             array (
                 'id' => 36,
                 'menu_id' => 1,
@@ -413,26 +397,26 @@ class MenuItemsTableSeeder extends Seeder
                 'icon_class' => 'fa-solid fa-dumbbell',
                 'color' => NULL,
                 'parent_id' => 13,
-                'order' => 2,
+                'order' => 3,
                 'created_at' => '2022-07-20 12:08:15',
-                'updated_at' => '2022-07-20 12:13:27',
+                'updated_at' => '2023-01-09 19:45:29',
                 'route' => 'voyager.services.index',
                 'parameters' => NULL,
             ),
-            25 => 
+            24 => 
             array (
-                'id' => 37,
+                'id' => 38,
                 'menu_id' => 1,
-                'title' => 'Turnos',
+                'title' => 'Instructor',
                 'url' => '',
                 'target' => '_self',
-                'icon_class' => 'fa-solid fa-calendar',
+                'icon_class' => 'fa-solid fa-person-chalkboard',
                 'color' => '#000000',
                 'parent_id' => 13,
-                'order' => 3,
-                'created_at' => '2023-01-09 02:35:55',
-                'updated_at' => '2023-01-09 02:36:06',
-                'route' => 'shifts.index',
+                'order' => 2,
+                'created_at' => '2023-01-09 19:45:01',
+                'updated_at' => '2023-01-09 19:45:29',
+                'route' => 'instructors.index',
                 'parameters' => NULL,
             ),
         ));
