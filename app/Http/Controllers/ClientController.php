@@ -183,7 +183,8 @@ class ClientController extends Controller
 
     public function store(Request $request)
     {   
-        // return $request;
+        $request->merge(['subAmount'=>number_format($request->subAmount,2)]);
+        $request->merge(['amount'=>number_format($request->amount,2)]);        
 
         $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
 
@@ -197,11 +198,6 @@ class ClientController extends Controller
         }
 
 
-
-        if($request->subAmount == NULL)
-        {
-            $request->merge(['subAmount'=>0]);
-        }
         if($request->subAmount > $request->amount)
         {
             return redirect()->route('clients.index')->with(['message' => 'El cuota no debe ser mayor al monto total.', 'alert-type' => 'warning']);
@@ -217,21 +213,18 @@ class ClientController extends Controller
 
             $day = $fechaVigencia->diffInDays($fechaActual);
             $request->merge(['day'=>$day+1]);
-            // return 1;
         }
         else
         {
             $fechaActual = Carbon::createFromFormat('Y-m-d', $request->start);
             $fechaActual = $fechaActual->addDay($request->day-1);
             $request->merge(['finish'=>$fechaActual]);   
-            // return $request;         
         }
         try {
             $user = Auth::user()->id;
             // return $request;
 
             $aux= $request->amount - ($request->credit? $request->subAmount: $request->amount);
-            // return $aux;
 
             // if($request->subAmount > $request )
             $client = Client::create([
@@ -342,6 +335,9 @@ class ClientController extends Controller
     public function articleStore(Request $request)
     {
         // return $request;
+        $request->merge(['subAmount'=>number_format($request->subAmount,2)]);
+        // return $request;
+
         $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
 
         if(!$request->cashier_id || !$cashier)
@@ -360,10 +356,7 @@ class ClientController extends Controller
         }
 
 
-        if($request->subAmount == NULL)
-        {
-            $request->merge(['subAmount'=>0]);
-        }
+     
         $amount =0;
         for ($i=0; $i < count($request->total_pagar); $i++) { 
             $amount+= $request->total_pagar[$i];

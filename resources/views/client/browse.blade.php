@@ -160,7 +160,7 @@
                                 <div class="form-group">
                                     <small>Monto Recibido.</small>
                                     {{-- <input type="number" name="subAmount" id="input-subAmount" min="0" step="0.1" class="form-control" placeholder="Monto recibo Bs."> --}}
-                                    <input type="number" style="text-align: right" class="form-control" onkeypress="return filterFloat(event,this);" name="subAmount" id="input-subAmount" placeholder="Monto recibido Bs.">
+                                    <input type="number" min="0" style="text-align: right" value="0" step="0.1" onkeypress="return filterFloat(event,this);" class="form-control" name="subAmount" id="input-subAmount" placeholder="Monto recibido Bs.">
 
                                 </div>
                             </div>                               
@@ -256,7 +256,7 @@
                             <div id="div_amount" class="col-sm-3">
                                 <div class="form-group">
                                     <small>Monto Total.</small>
-                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" placeholder="Monto Total a Pagar" min="0" step="0.1" name="amount">
+                                    <input type="number" min="0" style="text-align: right" value="0" step="0.1" onkeypress="return filterFloat(event,this);" class="form-control" placeholder="Monto Total a Pagar" name="amount">
                                     {{-- <input type="number"  style="text-align: right" onkeypress="return filterFloat(event,this);" id="cantidad" placeholder="Cantidad Articulo" class="form-control text" title="Cantidad"> --}}
                                 </div>
                             </div>                    
@@ -281,10 +281,10 @@
                                     >
                                 </div>
                             </div>
-                            <div class="col-sm-3"id="text" style="display:none">
+                            <div class="col-sm-3" id="text" style="display:none">
                                 <div class="form-group">
                                     <small>Monto Recibido.</small>
-                                    <input type="number" style="text-align: right" class="form-control" onkeypress="return filterFloat(event,this);" class="form-control" step="0.1" name="subAmount" id="input-subAmount" value="0" placeholder="Monto recibido Bs.">
+                                    <input type="number" min="0" style="text-align: right" value="0" step="0.1" onkeypress="return filterFloat(event,this);" class="form-control" name="subAmount" id="input-subAmount" placeholder="Monto recibido Bs.">
 
                                 </div>
                             </div>                               
@@ -876,7 +876,7 @@
                 $('#div_2').html('')
                 var html_amount = `<div class="form-group">
                                     <small>Monto Total.</small>
-                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" class="form-control" placeholder="Monto Total a Pagar" min="0" step="0.1" name="amount">
+                                    <input type="number" min="0" style="text-align: right" value="0" step="0.1" onkeypress="return filterFloat(event,this);" class="form-control" placeholder="Monto Total a Pagar" name="amount">
                                 </div>`
                 $('#div_amount').html(html_amount)
 
@@ -921,7 +921,7 @@
 
                         var html_amount = `<div class="form-group">
                                     <small>Monto Total.</small>
-                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" class="form-control" placeholder="Monto Total a Pagar" min="0" step="0.1" name="amount">
+                                    <input type="number" min="0" style="text-align: right" value="0" step="0.1" onkeypress="return filterFloat(event,this);" class="form-control" placeholder="Monto Total a Pagar" name="amount">
                                 </div>`
 
                         $('#div_amount').html(html_amount)
