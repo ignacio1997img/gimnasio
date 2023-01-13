@@ -143,23 +143,8 @@
                                                             @if ( $item->plan)
                                                                 Plan: {{ $item->plan->name}}
                                                                 <br> 
-                                                                @if ($item->plan_id != 4)
                                                                     <b>{{date('d/m/Y', strtotime($item->start))}} Hasta {{date('d/m/Y', strtotime($item->finish))}}</b>
-                                                                @else
-                                                                    Dia: <small><b>{{ $item->day->name }}</b></small>
-                                                                @endif        
-                                                                <br>
-                                                                <b>Turno: 
-                                                                    @if($item->hour == 1)
-                                                                        Mañana
-                                                                    @endif
-                                                                    @if($item->hour == 2)
-                                                                        Tarde
-                                                                    @endif
-                                                                    @if($item->hour == 3)
-                                                                        Noche
-                                                                    @endif
-                                                                </b>  
+                                                                 
                                                             @else
                                                                 {{-- {{$item[0]->item}} --}}
                                                                 @php
