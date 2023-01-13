@@ -160,7 +160,7 @@
                                 <div class="form-group">
                                     <small>Monto Recibido.</small>
                                     {{-- <input type="number" name="subAmount" id="input-subAmount" min="0" step="0.1" class="form-control" placeholder="Monto recibo Bs."> --}}
-                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" name="subAmount" id="input-subAmount" placeholder="Monto recibido Bs." required>
+                                    <input type="number" style="text-align: right" class="form-control" onkeypress="return filterFloat(event,this);" name="subAmount" id="input-subAmount" placeholder="Monto recibido Bs.">
 
                                 </div>
                             </div>                               
@@ -284,7 +284,7 @@
                             <div class="col-sm-3"id="text" style="display:none">
                                 <div class="form-group">
                                     <small>Monto Recibido.</small>
-                                    <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" class="form-control" step="0.1" name="subAmount" id="input-subAmount" value="0" placeholder="Monto recibido Bs.">
+                                    <input type="number" style="text-align: right" class="form-control" onkeypress="return filterFloat(event,this);" class="form-control" step="0.1" name="subAmount" id="input-subAmount" value="0" placeholder="Monto recibido Bs.">
 
                                 </div>
                             </div>                               
