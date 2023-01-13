@@ -12,10 +12,12 @@
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "huddledigital/zendesk-laravel": "^3.7",
         "laravel/framework": "^8.40",
         "laravel/tinker": "^2.5",
         "laraveles/spanish": "^1.5",
         "orangehill/iseed": "^3.0",
+        "simplesoftwareio/simple-qrcode": "~4",
         "tcg/voyager": "^1.4"
     },
     "require-dev": {

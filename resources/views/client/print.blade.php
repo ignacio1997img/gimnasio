@@ -72,6 +72,7 @@
                 </td>
             </tr>
         </table>
+        
         <hr>
         {{-- <div id="watermark">
             <img src="{{ asset('images/icon.png') }}" height="100%" width="100%" /> 
@@ -258,6 +259,21 @@
             </tr>
         </table>
         <br>
+        <div class="visible-print text-center" style="text-align: center">
+            {!!
+            QrCode::size(100)->generate('
+                CODIGO: '.$data->id.'
+                CLIENTE: '.$data->people->first_name.' '.$data->people->last_name.'
+                CI.: '.$data->people->ci.'
+                FECHA: '.Carbon\Carbon::parse($data->created_at)->format('d/m/Y H-m-s').'
+                
+                TOTAL: Bs.'.$data->amount.'
+                DEUDA: Bs.'.$data->subAmount
+            );
+            // QrCode::format('png')->merge('/public/images/icon.png')->generate('Make me into a QrCode!');
+
+            !!}
+        </div>
         <hr>
         <table width="100%" cellpadding="5" style="font-size: 10px">
             <tr>
