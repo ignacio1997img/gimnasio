@@ -323,7 +323,7 @@
                         <input type="hidden" name="client_id" id="client_id">
                         <div class="form-group">
                             <label for="subAmount">Monto</label>
-                            <input type="number" style="text-align: right" min="1" class="form-control" onkeypress="return filterFloat(event,this);" name="subAmount" placeholder="Monto" required>
+                            <input type="number" min="0" style="text-align: right" value="0" step="0.1" onkeypress="return filterFloat(event,this);" class="form-control" name="subAmount" placeholder="Monto" required>
                         </div>
                         <div class="form-group">
                             <label for="observation">Observaciones</label>

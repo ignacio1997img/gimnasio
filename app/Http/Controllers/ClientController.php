@@ -461,8 +461,9 @@ class ClientController extends Controller
 
 
     public function aditionStore(Request $request)
-    {
-        // return $request;
+    {        
+        $request->merge(['subAmount'=>number_format($request->subAmount,2)]);
+
         $cashier = Cashier::where('user_id', Auth::user()->id)->where('status', 'abierta')->first();
 
         if(!$request->cashier_id || !$cashier)
@@ -480,7 +481,6 @@ class ClientController extends Controller
             $ok = Client::find($request->client_id);
             if(($ok->subAmount - $request->subAmount) < 0)
             {
-                // return 0;
                 return redirect()->route('clients.index')->with(['message' => 'El monto ingresado supera a la cantidad de la deuda.', 'alert-type' => 'warning']);
             }
             // return 1;
@@ -489,7 +489,7 @@ class ClientController extends Controller
                 'cashier_id' => $request->cashier_id,
                 'cant' => $request->subAmount,
                 'observation' => $request->observation,
-                'type' => $ok->service_id? 'servicio':'producto',
+                'type' => $ok->type == 'servicio'? 'servicio':'producto',
                 'userRegister_id' => Auth::user()->id
 
             ]);
