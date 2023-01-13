@@ -121,25 +121,62 @@
         @if ($data->type == 'servicio')
             <table width="100%" cellpadding="2" cellspacing="0" border="0" style="font-size: 12px">
                 <tr style="text-align: center">
-                    <th class="border" style="width: 5%">
-                        ATRASO
+                    <td class="border" style="text-align: right; width: 30%">
+                        SERVICIO:
+                    </td>
+                    <td class="border" style="width: 70%">
+                        {{$data->service->name}}
+                    </td>  
+                </tr>
+                <tr style="text-align: center">
+                    <td class="border" style="text-align: right; width: 30%">
+                        PLAN:
+                    </td>
+                    <td class="border" style="width: 70%">
+                        {{$data->plan->name}}
+                    </td>  
+                </tr>
+                <tr style="text-align: center">
+                    <td class="border" style="text-align: right; width: 30%">
+                        HORARIO:
+                    </td>
+                    <td class="border" style="width: 70%">
+                        {{$data->hour->name}}
+                    </td>  
+                </tr>
+                <tr style="text-align: center">
+                    <td class="border" style="text-align: right; width: 30%">
+                        FECHA INICIO:
+                    </td>
+                    <td class="border" style="width: 70%">
+                        {{Carbon\Carbon::parse($data->start)->format('d/m/Y')}}
+                    </td>  
+                </tr>
+                <tr style="text-align: center">
+                    <td class="border" style="text-align: right; width: 30%">
+                        FECHA FIN:
+                    </td>
+                    <td class="border" style="width: 70%">
+                        {{Carbon\Carbon::parse($data->finish)->format('d/m/Y')}}
+                    </td>  
+                </tr>
+            </table>
+            <br>
+            <table width="100%" cellpadding="2" cellspacing="0" border="0" style="font-size: 12px">
+                <tr>
+                    <th colspan="1" class="border" style="text-align: center; width: 70%">
+                        TOTAL A PAGAR
                     </th>
-                    <th class="border" style="width: 70%">
-                        DIAS PAGADO
-                    </th>                
-                    <th class="border" style="width: 25%">
-                        TOTAL
+                    <th class="border" style="text-align: right; width: 30%">
+                        Bs.{{number_format($data->amount)}}
                     </th>
                 </tr>
-                @php
-                    $total=0;
-                @endphp
-                
                 <tr>
-                    <th colspan="2" class="border" style="text-align: center; width: 75%">
-                        TOTAL (BS)
+                    <th colspan="1" class="border" style="text-align: center; width: 70%">
+                        DEUDA
                     </th>
-                    <th class="border" style="text-align: right; width: 25%">
+                    <th class="border" style="text-align: right; width: 30%">
+                        Bs.{{number_format($data->subAmount)}}
                     </th>
                 </tr>
             </table>

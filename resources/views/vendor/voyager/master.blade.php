@@ -30,6 +30,9 @@
     {{-- para las tablas Stilos --}}
     <link rel="stylesheet" href="{{ asset('css/table.css') }}">
 
+    {{-- SweetAlert2 --}}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 
     <!-- App CSS -->

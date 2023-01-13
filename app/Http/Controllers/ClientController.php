@@ -588,38 +588,40 @@ class ClientController extends Controller
         return Adition::where('client_id', $id)->get();
     }
 
+
+    //para poner en deudores atrasados a los clientes
     public function clientBaja()
     {
         
-        $date = date('Y-m-d'); 
-        $cli = Client::where('status', 1)->where('amount', '=', 'subAmount')->where('deleted_at', null)->get();
-        // return $cli;
-        foreach($cli as $item)
-        {
+        // $date = date('Y-m-d'); 
+        // $cli = Client::where('status', 1)->where('amount', '=', 'subAmount')->where('deleted_at', null)->get();
+        // // return $cli;
+        // foreach($cli as $item)
+        // {
             
 
-            if($item->start && $item->finish)
-            {
-                // $fin=Carbon::parse($item->finish);    
-                $fin=Carbon::parse($date);
-                $inicio=Carbon::parse($item->finish);
-                if( $fin > $inicio)
-                {
-                    Client::where('id', $item->id)->update(['status'=>0]);
-                }
-            }
-            else
-            {
+        //     if($item->start && $item->finish)
+        //     {
+        //         // $fin=Carbon::parse($item->finish);    
+        //         $fin=Carbon::parse($date);
+        //         $inicio=Carbon::parse($item->finish);
+        //         if( $fin > $inicio)
+        //         {
+        //             Client::where('id', $item->id)->update(['status'=>0]);
+        //         }
+        //     }
+        //     else
+        //     {
                        
-                $fin=Carbon::parse($date);
-                $inicio = date_format($item->created_at, "Y-m-d");        
-                $inicio=Carbon::parse($inicio);
-                if( $fin > $inicio)
-                {
-                    Client::where('id', $item->id)->update(['status'=>0]);
-                }
-            }
-        }
-        return 1;
+        //         $fin=Carbon::parse($date);
+        //         $inicio = date_format($item->created_at, "Y-m-d");        
+        //         $inicio=Carbon::parse($inicio);
+        //         if( $fin > $inicio)
+        //         {
+        //             Client::where('id', $item->id)->update(['status'=>0]);
+        //         }
+        //     }
+        // }
+        // return 1;
     }
 }
