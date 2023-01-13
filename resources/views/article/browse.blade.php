@@ -155,7 +155,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <small>Imagen.</small>
-                                        <input accept="image/png,image/jpeg" type="file" name="image" class="form-control" required>
+                                        <input accept="image/png,image/jpeg" type="file" name="image" class="form-control">
                                     </div>
                                 </div>   
                             </div>

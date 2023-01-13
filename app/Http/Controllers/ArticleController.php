@@ -47,7 +47,7 @@ class ArticleController extends Controller
 
             $user = Auth::user();
             $busine = Busine::find($user->id);
-            $image='';
+            $imagen='';
 
             $file = $request->file('image');
             
@@ -55,16 +55,7 @@ class ArticleController extends Controller
             {
                 $imagen = $this->agregar_imagenes($request->file('image'));
 
-                // $nombre_origen = $file->getClientOriginalName();
-                    
-                // $newFileName = Str::random(20).time().'.'.$file->getClientOriginalExtension();
-                // // return $newFileName;
-                    
-                // $dir =  "Article/".$busine->id."-".$busine->name."/".date('F').date('Y');
-                    
-                // Storage::makeDirectory($dir);
-                // Storage::disk('public')->put($dir.'/'.$newFileName, file_get_contents($file));
-                // $image = $dir."/".$newFileName;                   
+                               
             }
             Article::create([
                 'category_id' => $request->category_id,
