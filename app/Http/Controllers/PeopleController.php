@@ -11,6 +11,8 @@ class PeopleController extends Controller
 {
     public function index()
     {
+        $data = DB::select('select * from Personas');
+        return $data;
         // $user = Auth::user();
         // dd($user);
         return view('people.browse');
