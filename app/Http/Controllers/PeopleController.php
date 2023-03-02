@@ -11,6 +11,8 @@ class PeopleController extends Controller
 {
     public function index()
     {
+        $data = DB::table('dbo.Personas')->get();
+        dump($data);
         $data = DB::select('select * from Personas');
         return $data;
         // $user = Auth::user();
