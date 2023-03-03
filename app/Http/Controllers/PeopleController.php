@@ -11,7 +11,7 @@ class PeopleController extends Controller
 {
     public function index()
     {
-        $data = DB::connection('mysqls')->table('people')->get();
+        $data = DB::connection('mysqls')->table('contratos')->get();
         dump($data);
         $data = DB::table('dbo.Personas')->get();
         dump($data);
