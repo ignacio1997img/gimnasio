@@ -13,6 +13,7 @@ class PeopleController extends Controller
 {
     public function conection()
     {
+
         $host = '190.129.54.196';
         $dbname = 'SIA_BENII';
         $user = 'sia';
@@ -30,7 +31,7 @@ class PeopleController extends Controller
     public function index()
     {
         
-        return $this->conection();
+        // return $this->conection();
         $data = DB::connection('sqlsrv')->table('Personas')->select('IdPersona')->toSql();
         dd($data);
         $data = DB::table('dbo.Personas')->get();
