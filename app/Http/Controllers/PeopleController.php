@@ -6,12 +6,32 @@ use App\Models\People;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PDO;
+// use Passport::pruneRevokedTokens();
 
 class PeopleController extends Controller
 {
+    public function conection()
+    {
+        $host = '190.129.54.196';
+        $dbname = 'SIA_BENII';
+        $user = 'sia';
+        $pasword = 'G0be2022*';
+        $puerto = 1433;
+
+
+        try {
+            $count = new PDO ("sqlsrv:Serve=$host,$puerto;Database=$dbname", $user, $pasword);
+            return "connected";
+        } catch (\Throwable $th) {
+            return "desconected $th";
+        }
+    }
     public function index()
     {
-        $data = DB::connection('sqlsrv')->table('Personas')->get();
+        
+        return $this->conection();
+        $data = DB::connection('sqlsrv')->table('Personas')->select('IdPersona')->toSql();
         dd($data);
         $data = DB::table('dbo.Personas')->get();
         dump($data);
