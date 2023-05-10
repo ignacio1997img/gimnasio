@@ -32,12 +32,12 @@ class PeopleController extends Controller
     {
         
         // return $this->conection();
-        $data = DB::connection('sqlsrv')->table('Personas')->select('IdPersona')->toSql();
-        dd($data);
-        $data = DB::table('dbo.Personas')->get();
-        dump($data);
-        $data = DB::select('select * from Personas');
-        return $data;
+        // $data = DB::connection('sqlsrv')->table('Personas')->select('IdPersona')->toSql();
+        // dd($data);
+        // $data = DB::table('dbo.Personas')->get();
+        // dump($data);
+        // $data = DB::select('select * from Personas');
+        // return $data;
         // $user = Auth::user();
         // dd($user);
         return view('people.browse');
