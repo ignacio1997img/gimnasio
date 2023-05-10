@@ -19,6 +19,23 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
 
+
+
+
+    <style>
+        .form-control, .select2-selection, .mce-tinymce {
+            border: 1px solid #464545 !important;
+            /* color: #f40202; */
+            color:rgb(30, 29, 29) !important;
+            /* font-weight: 200; */
+        }
+        label
+        {
+            color: rgb(33, 33, 33) !important;
+        }
+    </style>
+
+
     <!-- Favicon -->
     <?php $admin_favicon = Voyager::setting('admin.icon_image', ''); ?>
     @if($admin_favicon == '')
